@@ -4,7 +4,7 @@ CC=gcc
 
 default: dumblisp
 
-dumblisp: lexer.o interpreter.o
+dumblisp: lexer.o interpreter.o parser.o
 	gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
 %.o: %.c
@@ -15,3 +15,6 @@ clean:
 
 test:
 	./runtests
+
+format:
+	clang-format -i *.c *.h

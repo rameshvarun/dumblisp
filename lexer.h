@@ -21,21 +21,21 @@ typedef struct {
   int lineno;
 
   union {
-    const char* string_value;
+    const char *string_value;
     int int_value;
   } data;
 } token_t;
 
 typedef struct {
-  FILE* file;
+  FILE *file;
   int lineno;
-  const char* filename;
+  const char *filename;
   int errors;
 } lexing_context;
 
-void create_lexing_context(lexing_context* ctx, const char* filename);
-void get_next_token(lexing_context* ctx, token_t* token);
-const char* get_token_type_name(TOKEN_TYPE type);
+void create_lexing_context(lexing_context *ctx, const char *filename);
+void get_next_token(lexing_context *ctx, token_t *token);
+const char *get_token_type_name(TOKEN_TYPE type);
 bool is_whitespace(char c);
 bool is_digit(char c);
 bool is_letter(char c);

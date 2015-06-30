@@ -1,3 +1,3 @@
 # Dumblisp
 
-A dumblisp interpreter, made for practice.
+A dumb lisp interpreter, made for practice.

@@ -1,4 +1,5 @@
 CC=gcc
+LIBS=-lreadline
 
 .PHONY: default test clean
 

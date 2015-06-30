@@ -3,17 +3,44 @@
 #include <stdlib.h>
 #include <strings.h>
 
-void create_lexing_context(lexing_context *ctx, const char *filename) {
+void create_file_lexer(lexing_context *ctx, const char *filename) {
   ctx->filename = filename;
   ctx->lineno = 1;
   ctx->errors = 0;
-  ctx->file = fopen(filename, "r");
+  ctx->source_type = FILE_SOURCE;
+  ctx->source.file = fopen(filename, "r");
+}
+
+void create_string_lexer(lexing_context *ctx, const char *source) {
+  ctx->filename = "<string>";
+  ctx->lineno = 1;
+  ctx->errors = 0;
+  ctx->source_type = STRING_SOURCE;
+  ctx->source.string = source;
+}
+
+static int get_char(lexing_context *ctx) {
+  if(ctx->source_type == FILE_SOURCE)
+    return getc(ctx->source.file);
+  else {
+    char c = *(ctx->source.string);
+    ctx->source.string++;
+    if(c == '\0') return EOF;
+    else return c;
+   }
+}
+
+static void unget_char(lexing_context *ctx, char c) {
+  if(ctx->source_type == FILE_SOURCE)
+    ungetc(c, ctx->source.file);
+    else
+      ctx->source.string--;
 }
 
 // Advance the file pointer until after the next newline
 static void advance_until_newline(lexing_context *ctx) {
   while (true) {
-    const int c = getc(ctx->file);
+    const int c = get_char(ctx);
     if (c == EOF || c == '\n')
       return;
   }
@@ -24,7 +51,7 @@ const char *read_string(lexing_context *ctx) {
   char literal[MAX_LITERAL_SIZE];
   int position = 0;
   while (true) {
-    const int c = getc(ctx->file);
+    const int c = get_char(ctx);
     if (c == '\"') {
       literal[position] = '\0';
       break;
@@ -46,13 +73,13 @@ static const char *read_symbol(lexing_context *ctx) {
   char name[MAX_LITERAL_SIZE];
   int position = 0;
   while (true) {
-    const int c = getc(ctx->file);
+    const int c = get_char(ctx);
     if (is_validsymbolchar(c)) {
       name[position] = c;
       ++position;
     } else {
       name[position] = '\0';
-      ungetc(c, ctx->file);
+      unget_char(ctx, c);
       break;
     }
   }
@@ -63,13 +90,13 @@ static int read_integer(lexing_context *ctx) {
   char string[MAX_INTEGER_LITERAL_SIZE];
   int position = 0;
   while (true) {
-    const int c = getc(ctx->file);
+    const int c = get_char(ctx);
     if (is_digit(c)) {
       string[position] = c;
       ++position;
     } else {
       string[position] = '\0';
-      ungetc(c, ctx->file);
+      unget_char(ctx, c);
       break;
     }
   }
@@ -87,7 +114,7 @@ bool is_alphanumeric(char c) { return is_letter(c) || is_digit(c); }
 // Get the next token starting from the current file cursor
 void get_next_token(lexing_context *ctx, token_t *token) {
   while (true) {
-    const int c = getc(ctx->file);
+    const int c = get_char(ctx);
 
     // End of File token
     if (c == EOF) {
@@ -97,7 +124,7 @@ void get_next_token(lexing_context *ctx, token_t *token) {
 
     // Beginning of a symbol
     if (is_validsymbolchar(c)) {
-      ungetc(c, ctx->file);
+      unget_char(ctx, c);
       token->type = SYMBOL_TOKEN;
       token->data.string_value = read_symbol(ctx);
       break;
@@ -105,7 +132,7 @@ void get_next_token(lexing_context *ctx, token_t *token) {
 
     //  Beginning of an integer
     if (is_digit(c)) {
-      ungetc(c, ctx->file);
+      unget_char(ctx, c);
       token->type = INT_TOKEN;
       token->data.int_value = read_integer(ctx);
       break;
@@ -169,4 +196,29 @@ const char *get_token_type_name(TOKEN_TYPE type) {
   default:
     return "UNKOWN_TYPE";
   }
+}
+
+void test_lexer(lexing_context* ctx) {
+      // For now simply prints out tokens
+    while (true) {
+      token_t tok;
+      get_next_token(ctx, &tok);
+
+      switch (tok.type) {
+      case STRING_TOKEN:
+      case SYMBOL_TOKEN:
+        printf("%s at %s:%d - %s\n", get_token_type_name(tok.type), ctx->filename, tok.lineno,
+               tok.data.string_value);
+        break;
+      case INT_TOKEN:
+        printf("%s at %s:%d - %d\n", get_token_type_name(tok.type), ctx->filename, tok.lineno,
+               tok.data.int_value);
+        break;
+      default:
+        printf("%s at %s:%d\n", get_token_type_name(tok.type), ctx->filename, tok.lineno);
+      }
+
+      if (tok.type == EOF_TOKEN)
+        break;
+    }
 }

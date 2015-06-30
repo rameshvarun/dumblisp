@@ -32,14 +32,27 @@ typedef struct {
 
 // A lexing context
 typedef struct {
-  FILE *file;
+  // The lexer can either read from a file, or from a string
+  enum {
+    FILE_SOURCE,
+    STRING_SOURCE
+  } source_type;
+
+  union {
+    FILE *file;
+    const char* string;
+  } source;
+  
   int lineno;
   const char *filename;
   int errors;
 } lexing_context;
 
 // Creates a lexing context that reads tokens from the given filename
-void create_lexing_context(lexing_context *ctx, const char *filename);
+void create_file_lexer(lexing_context *ctx, const char *filename);
+
+// Creates a lexing context that reads tokens from a given string
+void create_string_lexer(lexing_context *ctx, const char *string);
 
 // Gets the next token in the given lexing context
 void get_next_token(lexing_context *ctx, token_t *token);
@@ -58,5 +71,7 @@ bool is_letter(char c);
 
 // Returns true if c is a letter or a number
 bool is_alphanumeric(char c);
+
+void test_lexer(lexing_context* ctx);
 
 #endif

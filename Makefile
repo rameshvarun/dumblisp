@@ -5,7 +5,7 @@ LIBS=-lreadline
 
 default: dumblisp
 
-dumblisp: lexer.o interpreter.o parser.o
+dumblisp: lexer.o interpreter.o parser.o emitter.o scope.o
 	gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
 %.o: %.c

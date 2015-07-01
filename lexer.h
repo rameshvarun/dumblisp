@@ -33,16 +33,13 @@ typedef struct {
 // A lexing context
 typedef struct {
   // The lexer can either read from a file, or from a string
-  enum {
-    FILE_SOURCE,
-    STRING_SOURCE
-  } source_type;
+  enum { FILE_SOURCE, STRING_SOURCE } source_type;
 
   union {
     FILE *file;
-    const char* string;
+    const char *string;
   } source;
-  
+
   int lineno;
   const char *filename;
   int errors;
@@ -72,6 +69,6 @@ bool is_letter(char c);
 // Returns true if c is a letter or a number
 bool is_alphanumeric(char c);
 
-void test_lexer(lexing_context* ctx);
+void test_lexer(lexing_context *ctx);
 
 #endif

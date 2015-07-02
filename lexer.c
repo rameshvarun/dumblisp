@@ -9,6 +9,7 @@ void create_file_lexer(lexing_context *ctx, const char *filename) {
   ctx->errors = 0;
   ctx->source_type = FILE_SOURCE;
   ctx->source.file = fopen(filename, "r");
+  ctx->stack = NULL;
 }
 
 void create_string_lexer(lexing_context *ctx, const char *source) {
@@ -17,6 +18,7 @@ void create_string_lexer(lexing_context *ctx, const char *source) {
   ctx->errors = 0;
   ctx->source_type = STRING_SOURCE;
   ctx->source.string = source;
+  ctx->stack = NULL;
 }
 
 static int get_char(lexing_context *ctx) {
@@ -113,8 +115,23 @@ bool is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 
 bool is_alphanumeric(char c) { return is_letter(c) || is_digit(c); }
 
+void unget_token(lexing_context *ctx, token_t *token) {
+  token_t* new_token = malloc(sizeof(token_t));
+  memcpy(new_token, token, sizeof(token_t));
+  new_token->next = ctx->stack;
+  ctx->stack = new_token;
+}
+
 // Get the next token starting from the current file cursor
 void get_next_token(lexing_context *ctx, token_t *token) {
+  if (ctx->stack) {
+    token_t *next_tok = ctx->stack;
+    ctx->stack = next_tok->next;
+    memcpy(token, next_tok, sizeof(token_t));
+    free(next_tok);
+    return;
+  }
+
   while (true) {
     const int c = get_char(ctx);
 

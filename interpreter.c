@@ -53,7 +53,15 @@ int main(int argc, char **argv) {
 
     struct scope *root = create_root_scope();
 
-    struct expr *e = parse_expression(&ctx);
-    eval(root, e);
+    while(true) {
+      token_t token;
+      get_next_token(&ctx, &token);
+
+      if(token.type == EOF_TOKEN) break;
+
+      unget_token(&ctx, &token);
+      struct expr *e = parse_expression(&ctx);
+      eval(root, e);
+    }
   }
 }

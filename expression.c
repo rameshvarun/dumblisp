@@ -51,6 +51,7 @@ struct expr *eval(struct scope *scope, struct expr *e) {
       if (head->type == BUILTIN_EXPR) {
         return head->data.func_ptr(scope, e->data.head->next);
       } else {
+        // Not implemented yet
         abort();
       }
     }

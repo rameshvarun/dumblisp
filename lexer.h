@@ -21,7 +21,9 @@ typedef enum {
 } TOKEN_TYPE;
 
 // A token object
-typedef struct {
+typedef struct token {
+  struct token* next;
+
   TOKEN_TYPE type;
   int lineno;
   union {
@@ -43,6 +45,8 @@ typedef struct {
   int lineno;
   const char *filename;
   int errors;
+
+  token_t* stack;
 } lexing_context;
 
 // Creates a lexing context that reads tokens from the given filename
@@ -53,6 +57,9 @@ void create_string_lexer(lexing_context *ctx, const char *string);
 
 // Gets the next token in the given lexing context
 void get_next_token(lexing_context *ctx, token_t *token);
+
+// Pushes a token back into the token stream
+void unget_token(lexing_context *ctx, token_t *token);
 
 // Gets the type of the token as a string
 const char *get_token_type_name(TOKEN_TYPE type);

@@ -14,6 +14,11 @@ struct expr *parse_expression(lexing_context *ctx) {
     return e;
   }
 
+  if (token.type == EOF_TOKEN) {
+    fprintf(stderr, "Parse Error: Unexpected EOF token\n");
+    exit(1);
+  }
+
   // Malloc a new expression object
   struct expr *e = malloc(sizeof(struct expr));
   memset(e, 0, sizeof(struct expr));

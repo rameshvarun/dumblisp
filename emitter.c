@@ -31,6 +31,10 @@ void emit_expression(struct expr *e) {
     printf(")");
     break;
 
+  case BUILTIN_EXPR:
+    printf("<built-in function>");
+    break;
+
   // Unkown expression type
   default:
     printf("UNKOWN_EXPR");

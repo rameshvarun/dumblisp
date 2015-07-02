@@ -2,8 +2,8 @@
 #define BUILTINS_H
 
 #include "scope.h"
-#include "parser.h"
+#include "expression.h"
 
-typedef void (*builtin)(struct scope *scope, struct expr *arguments);
+struct expr *builtin_puts(struct scope *scope, struct expr *arguments);
 
 #endif

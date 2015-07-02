@@ -1,6 +1,9 @@
 #ifndef SCOPE_H
 #define SCOPE_H
 
+struct scope;
+struct mapping;
+
 // Represents a single binding of a variable to a value
 struct mapping {
   struct mapping *next;

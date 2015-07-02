@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "emitter.h"
 #include "scope.h"
+#include "builtins.h"
 
 #include "stdlib.h"
 #include <readline/readline.h>
@@ -12,35 +13,8 @@
 // Creates the root scope of the program, populating it with the necessary built-ins.
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
+  scope_add_mapping(root, "puts", create_builtin(builtin_puts));
   return root;
-}
-
-struct expr *eval(struct scope *scope, struct expr *e) {
-  // If this expression is quoted, then evaling it returns
-  // the expression, unquoted.
-  if (e->quoted) {
-    e->quoted = false;
-    return e;
-  }
-
-  switch (e->type) {
-  // String and Integer expressions evaluate to themselves.
-  case STRING_EXPR:
-  case INT_EXPR:
-    return e;
-  case SYMBOL_EXPR: {
-    struct expr *value = scope_lookup(scope, e->data.string_value);
-    if (!value) {
-      fprintf(stderr, "Symbol %s not bound to any value\n", e->data.string_value);
-      exit(1);
-    }
-    return NULL;
-  }
-  default:
-    fprintf(stderr, "Unkown expression type.\n");
-    exit(1);
-    return NULL;
-  }
 }
 
 void run_repl() {

@@ -22,7 +22,7 @@ typedef enum {
 
 // A token object
 typedef struct token {
-  struct token* next;
+  struct token *next;
 
   TOKEN_TYPE type;
   int lineno;
@@ -46,7 +46,7 @@ typedef struct {
   const char *filename;
   int errors;
 
-  token_t* stack;
+  token_t *stack;
 } lexing_context;
 
 // Creates a lexing context that reads tokens from the given filename

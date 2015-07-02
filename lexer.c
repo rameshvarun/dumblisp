@@ -55,10 +55,28 @@ const char *read_string(lexing_context *ctx) {
   char literal[MAX_LITERAL_SIZE];
   int position = 0;
   while (true) {
-    const int c = get_char(ctx);
+    int c = get_char(ctx);
     if (c == '\"') {
       literal[position] = '\0';
       break;
+    }
+
+    if (c == '\\') {
+      const int next = get_char(ctx);
+      switch (next) {
+      case 'n':
+        c = '\n';
+        break;
+      case 't':
+        c = '\t';
+        break;
+      case 'r':
+        c = '\r';
+        break;
+      default:
+        c = next;
+        break;
+      }
     }
 
     literal[position] = c;
@@ -116,7 +134,7 @@ bool is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 bool is_alphanumeric(char c) { return is_letter(c) || is_digit(c); }
 
 void unget_token(lexing_context *ctx, token_t *token) {
-  token_t* new_token = malloc(sizeof(token_t));
+  token_t *new_token = malloc(sizeof(token_t));
   memcpy(new_token, token, sizeof(token_t));
   new_token->next = ctx->stack;
   ctx->stack = new_token;

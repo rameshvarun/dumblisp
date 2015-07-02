@@ -13,7 +13,7 @@
 // Creates the root scope of the program, populating it with the necessary built-ins.
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
-  scope_add_mapping(root, "puts", create_builtin(builtin_puts));
+  scope_add_mapping(root, "print", create_builtin(builtin_print));
   return root;
 }
 
@@ -33,6 +33,7 @@ void run_repl() {
     struct expr *result = eval(root, e);
 
     // Print back out result
+    printf("\n => ");
     emit_expression(result);
     printf("\n");
 
@@ -53,11 +54,12 @@ int main(int argc, char **argv) {
 
     struct scope *root = create_root_scope();
 
-    while(true) {
+    while (true) {
       token_t token;
       get_next_token(&ctx, &token);
 
-      if(token.type == EOF_TOKEN) break;
+      if (token.type == EOF_TOKEN)
+        break;
 
       unget_token(&ctx, &token);
       struct expr *e = parse_expression(&ctx);

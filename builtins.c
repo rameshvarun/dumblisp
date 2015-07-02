@@ -6,6 +6,10 @@
 /* ARITHMATIC OPERATORS */
 
 struct expr *builtin_plus(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL) {
+    fprintf(stderr, "+ must have at least one argument.\n");
+    exit(1);
+  }
   return NULL;
 }
 
@@ -23,12 +27,31 @@ struct expr *builtin_div(struct scope *scope, struct expr *arguments) {
 
 /* SYSTEM CALL WRAPPERS */
 
-struct expr *builtin_puts(struct scope *scope, struct expr *arguments) {
-  assert(arguments != NULL);
-  struct expr *arg = eval(scope, arguments);
-  assert(arguments->type == STRING_EXPR);
+struct expr *builtin_print(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL) {
+    fprintf(stderr, "print must have at least one argument.\n");
+    exit(1);
+  }
 
-  puts(arg->data.string_value);
+  for (struct expr *e = arguments; e != NULL; e = e->next) {
+    struct expr *value = eval(scope, e);
+    switch (value->type) {
+    case STRING_EXPR:
+      printf("%s", value->data.string_value);
+      break;
+    case INT_EXPR:
+      printf("%d", value->data.int_value);
+      break;
+    default:
+      break;
+    }
+
+    if (e->next != NULL) {
+      printf(" ");
+    }
+  }
+
+  printf("\n");
   return create_empty_list();
 }
 

@@ -4,6 +4,6 @@
 #include "scope.h"
 #include "expression.h"
 
-struct expr *builtin_puts(struct scope *scope, struct expr *arguments);
+struct expr *builtin_print(struct scope *scope, struct expr *arguments);
 
 #endif

@@ -1,5 +1,5 @@
-; A basic Hello World Lisp example
+; A basic Hello World example
 (defun hello-world ()
-  (write-line "Hello World!"))
+  (puts "Hello World!"))
 
 (hello-world)

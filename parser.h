@@ -3,8 +3,9 @@
 
 #include "lexer.h"
 #include "stdlib.h"
+#include "builtins.h"
 
-typedef enum { LIST_EXPR, INT_EXPR, STRING_EXPR, SYMBOL_EXPR } EXPR_TYPE;
+typedef enum { LIST_EXPR, INT_EXPR, STRING_EXPR, SYMBOL_EXPR, BUILTIN_EXPR } EXPR_TYPE;
 
 // Represents an S-expression
 struct expr {
@@ -21,13 +22,16 @@ struct expr {
     // For expressions of type LIST_EXPR, this points to the first element of the list, or NULL if
     // it is
     // an empty list
-    struct expr *items;
+    struct expr *head;
 
     // For expressions of type INT_EXPR, this represents it's integer value
     int int_value;
 
-    // For expressions of type, STRING_EXPR, this represents the value of the string
+    // For expressions of type STRING_EXPR, this represents the value of the string
     const char *string_value;
+
+    // For expressions of type BUILTIN_EXPR, this represents the corresponding function pointer
+    builtin builtin_func;
   } data;
 };
 

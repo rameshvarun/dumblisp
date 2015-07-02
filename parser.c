@@ -2,8 +2,9 @@
 
 #include <strings.h>
 
-// Recursive-descent parser
+// Implementation of a recursive-descent parser
 struct expr *parse_expression(lexing_context *ctx) {
+  // Start by getting the next token from the lexing context
   token_t token;
   get_next_token(ctx, &token);
 
@@ -29,22 +30,42 @@ struct expr *parse_expression(lexing_context *ctx) {
     e->data.int_value = token.data.int_value;
   }
 
-  // Symbol
+  // Symbol atom
   if (token.type == SYMBOL_TOKEN) {
     e->type = SYMBOL_EXPR;
     e->data.string_value = token.data.string_value;
   }
 
   // List expression
-  /*if (token.type == LEFT_PAREN_TOKEN) {
+  if (token.type == LEFT_PAREN_TOKEN) {
     e->type = LIST_EXPR;
-    abort();
-  }*/
+
+    struct expr *current = NULL;
+    while (true) {
+      // Try to parse the next element of the list
+      struct expr *next = parse_expression(ctx);
+
+      // If there are no more elements, end the loop
+      if (next == NULL)
+        break;
+
+      if (current == NULL) {
+        // If we haven't seen any elements yet, then next is the head of the loop.
+        e->data.head = next;
+      } else {
+        // Otherwise, next is the "next" of the current element
+        current->next = next;
+      }
+
+      // Advance the current element
+      current = next;
+    }
+  }
 
   // End of a list
-  /*if (token.type == RIGHT_PAREN_TOKEN) {
+  if (token.type == RIGHT_PAREN_TOKEN) {
     return NULL;
-   }*/
+  }
 
   return e;
 }

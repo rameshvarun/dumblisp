@@ -22,3 +22,15 @@ struct expr *div(struct scope *scope, struct expr *arguments) {
 struct expr *exit(struct scope *scope, struct expr *arguments) {
   return NULL;
 }
+
+struct expr *strlen(struct scope *scope, struct expr *arguments) {
+  return NULL;
+}
+
+struct expr *strcmp(struct scope *scope, struct expr *arguments) {
+  return NULL;
+}
+
+struct expr *strcat(struct scope *scope, struct expr *arguments) {
+  return NULL;
+}

@@ -1,4 +1,4 @@
-# Dumblisp
+# Dumblisp [![Build Status](https://travis-ci.org/rameshvarun/dumblisp.svg)](https://travis-ci.org/rameshvarun/dumblisp)
 
 A dumb lisp interpreter, made for practice.
 

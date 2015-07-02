@@ -10,7 +10,15 @@ struct expr *builtin_plus(struct scope *scope, struct expr *arguments) {
     fprintf(stderr, "+ must have at least one argument.\n");
     exit(1);
   }
-  return NULL;
+
+  int current_value = 0;
+  for (struct expr *e = arguments; e != NULL; e = e->next) {
+    struct expr *value = eval(scope, e);
+    assert(value->type == INT_EXPR);
+    current_value += value->data.int_value;
+  }
+
+  return create_int_expression(current_value);
 }
 
 struct expr *builtin_sub(struct scope *scope, struct expr *arguments) {

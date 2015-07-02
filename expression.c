@@ -22,6 +22,15 @@ struct expr *create_empty_list() {
   return e;
 }
 
+struct expr *create_int_expression(int value) {
+  // Malloc a new expression object
+  struct expr *e = malloc(sizeof(struct expr));
+  memset(e, 0, sizeof(struct expr));
+  e->type = INT_EXPR;
+  e->data.int_value = value;
+  return e;
+}
+
 struct expr *eval(struct scope *scope, struct expr *e) {
   // If this expression is quoted, then evaling it returns
   // the expression, unquoted.

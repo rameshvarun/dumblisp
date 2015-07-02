@@ -14,6 +14,7 @@
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
   scope_add_mapping(root, "print", create_builtin(builtin_print));
+  scope_add_mapping(root, "+", create_builtin(builtin_plus));
   return root;
 }
 

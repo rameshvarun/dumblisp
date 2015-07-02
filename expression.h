@@ -40,6 +40,7 @@ struct expr {
 
 struct expr *create_builtin(builtin func_ptr);
 struct expr *create_empty_list();
+struct expr *create_int_expression(int value);
 struct expr *eval(struct scope *scope, struct expr *e);
 
 #endif

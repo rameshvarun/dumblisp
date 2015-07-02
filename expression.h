@@ -6,11 +6,11 @@ struct expr;
 #include "stdbool.h"
 #include "scope.h"
 
-typedef enum { LIST_EXPR, INT_EXPR, STRING_EXPR, SYMBOL_EXPR, BUILTIN_EXPR } EXPR_TYPE;
+typedef enum { LIST_EXPR, INT_EXPR, STRING_EXPR, SYMBOL_EXPR, BUILTIN_EXPR, FUNC_EXPR } EXPR_TYPE;
 
 typedef struct expr *(*builtin)(struct scope *scope, struct expr *arguments);
 
-// Represents an S-expression
+// Represents an expression
 struct expr {
   // The next expression in the current list
   struct expr *next;
@@ -29,8 +29,8 @@ struct expr {
 
     // For expressions of type INT_EXPR, this represents it's integer value
     int int_value;
-    ;
-    // For expressions of type STRING_EXPR, this represents the value of the string
+
+    // For expressions of type STRING_EXPR or SYMBOL_EXPR, this represents the value of the string
     const char *string_value;
 
     // For expressions of type BUILTIN_EXPR, this represents the corresponding function pointer

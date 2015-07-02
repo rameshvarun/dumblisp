@@ -50,6 +50,10 @@ int main(int argc, char **argv) {
   if (argc == 2) {
     lexing_context ctx;
     create_file_lexer(&ctx, argv[1]);
-    test_lexer(&ctx);
+
+    struct scope *root = create_root_scope();
+
+    struct expr *e = parse_expression(&ctx);
+    eval(root, e);
   }
 }

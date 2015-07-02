@@ -15,7 +15,7 @@ clean:
 	rm -f *.o *~
 
 test:
-	./runtests
+	./runtests.sh
 
 format:
 	clang-format -i *.c *.h

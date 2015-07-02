@@ -1,5 +1,6 @@
 CC=gcc
 LIBS=-lreadline
+CFLAGS=-std=c99
 
 .PHONY: default test clean
 

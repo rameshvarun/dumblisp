@@ -136,6 +136,38 @@ struct expr *builtin_let(struct scope *scope, struct expr *arguments) {
   return last_value;
 }
 
+struct expr *builtin_plet(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL) {
+    fprintf(stderr, "let must have at least one argument.\n");
+    exit(1);
+  }
+
+  struct scope *new_scope = scope_create(scope);
+  assert(arguments->type == LIST_EXPR);
+
+  for (struct expr *mapping = arguments->data.head; mapping != NULL; mapping = mapping->next) {
+    assert(mapping->type == LIST_EXPR);
+
+    // Must have two arguments
+    assert(mapping->data.head != NULL);
+    assert(mapping->data.head->next != NULL);
+
+    struct expr *symb = mapping->data.head;
+    assert(symb->type == SYMBOL_EXPR);
+    struct expr *val = eval(new_scope, mapping->data.head->next);
+    scope_add_mapping(new_scope, symb->data.string_value, val);
+
+    // TODO: Ensure that a symbol doesn't repeat
+  }
+
+  struct expr *last_value = create_empty_list();
+  for (struct expr *e = arguments->next; e != NULL; e = e->next) {
+    last_value = eval(scope, e);
+  }
+
+  return last_value;
+}
+
 struct expr *builtin_exit(struct scope *scope, struct expr *arguments) {
   return NULL;
 }

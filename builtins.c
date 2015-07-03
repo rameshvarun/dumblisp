@@ -22,15 +22,56 @@ struct expr *builtin_plus(struct scope *scope, struct expr *arguments) {
 }
 
 struct expr *builtin_sub(struct scope *scope, struct expr *arguments) {
-  return NULL;
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "- must have at least two arguments.\n");
+    exit(1);
+  }
+
+  struct expr *first = eval(scope, arguments);
+  assert(first->type == INT_EXPR);
+  int current_value = first->data.int_value;
+  for (struct expr *e = arguments->next; e != NULL; e = e->next) {
+    struct expr *value = eval(scope, e);
+    assert(value->type == INT_EXPR);
+    current_value -= value->data.int_value;
+  }
+
+  return create_int_expression(current_value);
 }
 
 struct expr *builtin_mult(struct scope *scope, struct expr *arguments) {
-  return NULL;
+  if (arguments == NULL) {
+    fprintf(stderr, "* must have at least one argument.\n");
+    exit(1);
+  }
+
+  int current_value = 1;
+  for (struct expr *e = arguments; e != NULL; e = e->next) {
+    struct expr *value = eval(scope, e);
+    assert(value->type == INT_EXPR);
+    current_value *= value->data.int_value;
+  }
+
+  return create_int_expression(current_value);
 }
 
 struct expr *builtin_div(struct scope *scope, struct expr *arguments) {
-  return NULL;
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "/ must have at least two arguments.\n");
+    exit(1);
+  }
+
+  struct expr *first = eval(scope, arguments);
+  assert(first->type == INT_EXPR);
+  int current_value = first->data.int_value;
+
+  for (struct expr *e = arguments->next; e != NULL; e = e->next) {
+    struct expr *value = eval(scope, e);
+    assert(value->type == INT_EXPR);
+    current_value /= value->data.int_value;
+  }
+
+  return create_int_expression(current_value);
 }
 
 /* SYSTEM CALL WRAPPERS */

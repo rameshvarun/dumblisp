@@ -13,8 +13,14 @@
 // Creates the root scope of the program, populating it with the necessary built-ins.
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
+
   scope_add_mapping(root, "print", create_builtin(builtin_print));
+
   scope_add_mapping(root, "+", create_builtin(builtin_plus));
+  scope_add_mapping(root, "-", create_builtin(builtin_sub));
+  scope_add_mapping(root, "*", create_builtin(builtin_mult));
+  scope_add_mapping(root, "/", create_builtin(builtin_div));
+
   return root;
 }
 

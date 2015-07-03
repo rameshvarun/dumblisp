@@ -6,10 +6,6 @@ A dumb lisp interpreter, made for practice.
 - libreadline-based REPL
 - It's dumb
 
-## TODO
-- Garbage collection
-- Interning symbol strings
-
 ## Built-in Functions
 ### print
 `print` can be used to write to stdout. Print take at least 1 argument.
@@ -20,3 +16,7 @@ A dumb lisp interpreter, made for practice.
 `let` creates a new scope, binds identifiers to values in that scope, and evaluates expresions.
 
 ### Arithmatic Operators (+, -, /, *)
+
+## TODO
+- Garbage collection
+- Interning symbol strings

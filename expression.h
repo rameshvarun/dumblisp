@@ -48,8 +48,8 @@ struct expr {
     // function
     struct {
       struct expr *arguments; // A list of symbols naming the argument of a function
-      struct scope *closure;  //
-
+      struct scope *closure;  // The scope in which this function was created
+      struct expr *body;      // A pointer to the first instruction in the body
     } function_value;
 
     // For expressions of type BOOL_EXPR, this represents the boolean value
@@ -60,6 +60,9 @@ struct expr {
 struct expr *create_builtin(builtin func_ptr);
 struct expr *create_empty_list();
 struct expr *create_int_expression(int value);
+struct expr *create_func_expression(struct expr *arguments, struct scope *closure,
+                                    struct expr *body);
+
 struct expr *eval(struct scope *scope, struct expr *e);
 
 #endif

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "string.h"
+#include "assert.h"
 
 struct expr *create_builtin(builtin func_ptr) {
   // Malloc a new expression object
@@ -28,6 +29,20 @@ struct expr *create_int_expression(int value) {
   memset(e, 0, sizeof(struct expr));
   e->type = INT_EXPR;
   e->data.int_value = value;
+  return e;
+}
+
+struct expr *create_func_expression(struct expr *arguments, struct scope *closure,
+                                    struct expr *body) {
+  // Malloc a new expression object
+  struct expr *e = malloc(sizeof(struct expr));
+  memset(e, 0, sizeof(struct expr));
+
+  e->type = FUNC_EXPR;
+  e->data.function_value.arguments = arguments;
+  e->data.function_value.closure = closure;
+  e->data.function_value.body = body;
+
   return e;
 }
 
@@ -58,9 +73,31 @@ struct expr *eval(struct scope *scope, struct expr *e) {
     else {
       struct expr *head = eval(scope, e->data.head);
       if (head->type == BUILTIN_EXPR) {
+        // Call the built-in construct.
         return head->data.func_ptr(scope, e->data.head->next);
+      } else if (head->type == FUNC_EXPR) {
+        // Call the function
+        struct scope *new_scope = scope_create(head->data.function_value.closure);
+
+        struct expr *actuals = e->data.head->next;
+        for (struct expr *formal = head->data.function_value.arguments; formal != NULL;
+             formal = formal->next) {
+          assert(formal->type == SYMBOL_EXPR);
+          if (actuals != NULL) {
+            scope_add_mapping(new_scope, formal->data.string_value, eval(scope, actuals));
+            actuals = actuals->next;
+          } else {
+            scope_add_mapping(new_scope, formal->data.string_value, create_empty_list());
+          }
+        }
+
+        struct expr *last_value = create_empty_list();
+        for (struct expr *statement = head->data.function_value.body; statement != NULL;
+             statement = statement->next) {
+          last_value = eval(new_scope, statement);
+        }
+        return last_value;
       } else {
-        // Not implemented yet
         abort();
       }
     }

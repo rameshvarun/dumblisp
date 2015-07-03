@@ -183,3 +183,28 @@ struct expr *builtin_strcmp(struct scope *scope, struct expr *arguments) {
 struct expr *builtin_strcat(struct scope *scope, struct expr *arguments) {
   return NULL;
 }
+
+struct expr *builtin_lambda(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "lambda must have at least two arguments.\n");
+    exit(1);
+  }
+
+  assert(arguments->type == LIST_EXPR);
+  return create_func_expression(arguments->data.head, scope, arguments->next);
+}
+
+struct expr *builtin_defun(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL || arguments->next->next == NULL) {
+    fprintf(stderr, "defun must have at least three arguments.\n");
+    exit(1);
+  }
+
+  assert(arguments->type == SYMBOL_EXPR);
+  assert(arguments->next->type == LIST_EXPR);
+
+  scope_add_mapping(
+      scope, arguments->data.string_value,
+      create_func_expression(arguments->next->data.head, scope, arguments->next->next));
+  return create_empty_list();
+}

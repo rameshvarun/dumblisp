@@ -31,10 +31,27 @@ void emit_expression(struct expr *e) {
     printf(")");
     break;
 
+  // Builtin-in function
   case BUILTIN_EXPR:
     printf("<built-in function>");
     break;
 
+  // User-defined function object
+  case FUNC_EXPR:
+    printf("<function args: (");
+    for (struct expr *arg = e->data.function_value.arguments; arg != NULL; arg = arg->next) {
+      emit_expression(arg);
+      if (arg->next != NULL)
+        printf(" ");
+    }
+    printf(") body: (");
+    for (struct expr *curr = e->data.function_value.body; curr != NULL; curr = curr->next) {
+      emit_expression(curr);
+      if (curr->next != NULL)
+        printf(" ");
+    }
+    printf(")>");
+    break;
   // Unkown expression type
   default:
     printf("UNKOWN_EXPR");

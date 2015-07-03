@@ -6,7 +6,15 @@ struct expr;
 #include "stdbool.h"
 #include "scope.h"
 
-typedef enum { LIST_EXPR, INT_EXPR, STRING_EXPR, SYMBOL_EXPR, BUILTIN_EXPR, FUNC_EXPR } EXPR_TYPE;
+typedef enum {
+  LIST_EXPR,
+  INT_EXPR,
+  STRING_EXPR,
+  SYMBOL_EXPR,
+  BUILTIN_EXPR,
+  FUNC_EXPR,
+  BOOL_EXPR
+} EXPR_TYPE;
 
 typedef struct expr *(*builtin)(struct scope *scope, struct expr *arguments);
 
@@ -35,6 +43,17 @@ struct expr {
 
     // For expressions of type BUILTIN_EXPR, this represents the corresponding function pointer
     builtin func_ptr;
+
+    // For expressions of type FUNC_EXPR, this represents all of the data required to execute the
+    // function
+    struct {
+      struct expr *arguments; // A list of symbols naming the argument of a function
+      struct scope *closure;  //
+
+    } function_value;
+
+    // For expressions of type BOOL_EXPR, this represents the boolean value
+    bool boolean_value;
   } data;
 };
 

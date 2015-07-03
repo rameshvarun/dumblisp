@@ -31,4 +31,7 @@ struct scope *scope_create(struct scope *parent);
 // Adds a mapping to the given scope.
 void scope_add_mapping(struct scope *scope, const char *symbol, struct expr *value);
 
+// Sets the value of an existing mapping.
+void scope_set_value(struct scope *scope, const char *symbol, struct expr *value);
+
 #endif

@@ -27,6 +27,8 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "*", create_builtin(builtin_mult));
   scope_add_mapping(root, "/", create_builtin(builtin_div));
 
+  scope_add_mapping(root, "set", create_builtin(builtin_set));
+
   return root;
 }
 

@@ -17,4 +17,6 @@ struct expr *builtin_plet(struct scope *scope, struct expr *arguments);
 struct expr *builtin_lambda(struct scope *scope, struct expr *arguments);
 struct expr *builtin_defun(struct scope *scope, struct expr *arguments);
 
+struct expr *builtin_set(struct scope *scope, struct expr *arguments);
+
 #endif

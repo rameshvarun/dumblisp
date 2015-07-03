@@ -208,3 +208,15 @@ struct expr *builtin_defun(struct scope *scope, struct expr *arguments) {
       create_func_expression(arguments->next->data.head, scope, arguments->next->next));
   return create_empty_list();
 }
+
+struct expr *builtin_set(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "set must have at least three arguments.\n");
+    exit(1);
+  }
+
+  assert(arguments->type = SYMBOL_EXPR);
+  struct expr *val = eval(scope, arguments->next);
+  scope_set_value(scope, arguments->data.string_value, val);
+  return val;
+}

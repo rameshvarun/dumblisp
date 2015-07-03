@@ -37,3 +37,14 @@ void scope_add_mapping(struct scope *scope, const char *symbol, struct expr *val
   m->next = scope->mappings;
   scope->mappings = m;
 }
+
+void scope_set_value(struct scope *scope, const char *symbol, struct expr *value) {
+  for (struct scope *curr_scope = scope; curr_scope != NULL; curr_scope = curr_scope->parent) {
+    for (struct mapping *curr_map = curr_scope->mappings; curr_map != NULL; curr_map = curr_map->next) {
+      if (strcmp(curr_map->symbol, symbol) == 0) {
+	curr_map->value = value;
+	return;
+      }
+    }
+  }
+}

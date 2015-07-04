@@ -6,14 +6,17 @@ CFLAGS=-std=c99
 
 default: dumblisp
 
-dumblisp: lexer.o interpreter.o parser.o emitter.o scope.o expression.o builtins.o
+OBJS=src/lexer.o src/interpreter.o src/parser.o src/emitter.o src/scope.o src/expression.o src/builtins.o
+
+dumblisp: $(OBJS)
 	gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
-%.o: %.c
+src/%.o: src/%.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:
-	rm -f *.o *~
+	find . -name "*.o" -type f -delete
+	find . -name "*~" -type f -delete
 
 test:
 	./runtests.sh

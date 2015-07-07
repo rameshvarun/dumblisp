@@ -21,6 +21,39 @@ struct expr *builtin_plus(struct scope *scope, struct expr *arguments) {
   return create_int_expression(current_value);
 }
 
+struct expr *builtin_eq(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "= must have at least two arguments.");
+  }
+  struct expr *first = eval(scope, arguments);
+  struct expr *second = eval(scope, arguments->next);
+  assert(first->type == INT_EXPR);
+  assert(second->type == INT_EXPR);
+  return create_bool_expression(first->data.int_value == second->data.int_value);
+}
+
+struct expr *builtin_lt(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "= must have at least two arguments.");
+  }
+  struct expr *first = eval(scope, arguments);
+  struct expr *second = eval(scope, arguments->next);
+  assert(first->type == INT_EXPR);
+  assert(second->type == INT_EXPR);
+  return create_bool_expression(first->data.int_value < second->data.int_value);
+}
+
+struct expr *builtin_gt(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "= must have at least two arguments.");
+  }
+  struct expr *first = eval(scope, arguments);
+  struct expr *second = eval(scope, arguments->next);
+  assert(first->type == INT_EXPR);
+  assert(second->type == INT_EXPR);
+  return create_bool_expression(first->data.int_value > second->data.int_value);
+}
+
 struct expr *builtin_sub(struct scope *scope, struct expr *arguments) {
   if (arguments == NULL || arguments->next == NULL) {
     fprintf(stderr, "- must have at least two arguments.\n");
@@ -92,8 +125,10 @@ struct expr *builtin_print(struct scope *scope, struct expr *arguments) {
       printf("%d", value->data.int_value);
       break;
     case BOOL_EXPR:
-      if (value->data.boolean_value) printf("TRUE");
-      else printf("FALSE");
+      if (value->data.boolean_value)
+        printf("TRUE");
+      else
+        printf("FALSE");
     default:
       break;
     }

@@ -88,7 +88,7 @@ const char *read_string(lexing_context *ctx) {
 
 bool is_validsymbolchar(char c) {
   return is_letter(c) || c == '-' || c == ':' || c == '.' || c == '+' || c == '-' || c == '*' ||
-         c == '/' || c == '=';
+         c == '/' || c == '=' || c == '<' || c == '>';
 }
 
 // Read a symbol name, ending on a close-quote

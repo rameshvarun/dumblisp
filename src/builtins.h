@@ -6,6 +6,12 @@
 
 struct expr *builtin_print(struct scope *scope, struct expr *arguments);
 
+// Comparison operators
+struct expr *builtin_eq(struct scope *scope, struct expr *arguments);
+struct expr *builtin_lt(struct scope *scope, struct expr *arguments);
+struct expr *builtin_gt(struct scope *scope, struct expr *arguments);
+
+// Arithmatic operators
 struct expr *builtin_plus(struct scope *scope, struct expr *arguments);
 struct expr *builtin_mult(struct scope *scope, struct expr *arguments);
 struct expr *builtin_sub(struct scope *scope, struct expr *arguments);

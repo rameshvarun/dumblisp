@@ -18,20 +18,26 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "TRUE", create_bool_expression(true));
   scope_add_mapping(root, "FALSE", create_bool_expression(false));
 
+  // Keywords
   scope_add_mapping(root, "LET", create_builtin(builtin_let));
   scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
-
   scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
   scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
+  scope_add_mapping(root, "SET", create_builtin(builtin_set));
 
+  // Print function
   scope_add_mapping(root, "PRINT", create_builtin(builtin_print));
 
+  // Arithmatic operators
   scope_add_mapping(root, "+", create_builtin(builtin_plus));
   scope_add_mapping(root, "-", create_builtin(builtin_sub));
   scope_add_mapping(root, "*", create_builtin(builtin_mult));
   scope_add_mapping(root, "/", create_builtin(builtin_div));
 
-  scope_add_mapping(root, "SET", create_builtin(builtin_set));
+  // Comparison operators
+  scope_add_mapping(root, "=", create_builtin(builtin_eq));
+  scope_add_mapping(root, "<", create_builtin(builtin_lt));
+  scope_add_mapping(root, ">", create_builtin(builtin_gt));
 
   return root;
 }

@@ -14,6 +14,12 @@
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
 
+  // Control flow
+  scope_add_mapping(root, "IF", create_builtin(builtin_if));
+
+  // Boolean Operators
+  scope_add_mapping(root, "OR", create_builtin(builtin_or));
+
   // TRUE and FALSE booleans
   scope_add_mapping(root, "TRUE", create_bool_expression(true));
   scope_add_mapping(root, "FALSE", create_bool_expression(false));

@@ -3,6 +3,40 @@
 #include <stdlib.h>
 #include <assert.h>
 
+/* CONTROL FLOW */
+struct expr *builtin_if(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "if must have at least two arguments.\n");
+    exit(1);
+  }
+
+  struct expr *cond = eval(scope, arguments);
+  assert(cond->type = BOOL_EXPR);
+
+  // If the condiiton evaluates to true
+  if (cond->data.boolean_value) {
+    return eval(scope, arguments->next);
+  }
+
+  // If the conditon evaluates to false
+  if (arguments->next->next != NULL) {
+    return eval(scope, arguments->next->next);
+  }
+
+  return create_empty_list();
+}
+
+struct expr *builtin_or(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "= must have at least two arguments.");
+  }
+  struct expr *first = eval(scope, arguments);
+  struct expr *second = eval(scope, arguments->next);
+  assert(first->type == BOOL_EXPR);
+  assert(second->type == BOOL_EXPR);
+  return create_bool_expression(first->data.boolean_value || second->data.boolean_value);
+}
+
 /* ARITHMATIC OPERATORS */
 
 struct expr *builtin_plus(struct scope *scope, struct expr *arguments) {

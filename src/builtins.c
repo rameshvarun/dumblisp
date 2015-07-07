@@ -91,6 +91,9 @@ struct expr *builtin_print(struct scope *scope, struct expr *arguments) {
     case INT_EXPR:
       printf("%d", value->data.int_value);
       break;
+    case BOOL_EXPR:
+      if (value->data.boolean_value) printf("TRUE");
+      else printf("FALSE");
     default:
       break;
     }

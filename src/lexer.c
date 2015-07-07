@@ -1,7 +1,8 @@
 #include "lexer.h"
 
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
+#include <ctype.h>
 
 void create_file_lexer(lexing_context *ctx, const char *filename) {
   ctx->filename = filename;
@@ -87,7 +88,7 @@ const char *read_string(lexing_context *ctx) {
 
 bool is_validsymbolchar(char c) {
   return is_letter(c) || c == '-' || c == ':' || c == '.' || c == '+' || c == '-' || c == '*' ||
-         c == '/';
+         c == '/' || c == '=';
 }
 
 // Read a symbol name, ending on a close-quote
@@ -97,7 +98,7 @@ static const char *read_symbol(lexing_context *ctx) {
   while (true) {
     const int c = get_char(ctx);
     if (is_validsymbolchar(c)) {
-      name[position] = c;
+      name[position] = toupper(c);
       ++position;
     } else {
       name[position] = '\0';

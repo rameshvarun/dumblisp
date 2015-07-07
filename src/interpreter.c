@@ -15,23 +15,23 @@ static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
 
   // TRUE and FALSE booleans
-  scope_add_mapping(root, "true", create_bool_expression(true));
-  scope_add_mapping(root, "false", create_bool_expression(false));
+  scope_add_mapping(root, "TRUE", create_bool_expression(true));
+  scope_add_mapping(root, "FALSE", create_bool_expression(false));
 
-  scope_add_mapping(root, "let", create_builtin(builtin_let));
-  scope_add_mapping(root, "defun", create_builtin(builtin_defun));
+  scope_add_mapping(root, "LET", create_builtin(builtin_let));
+  scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
 
-  scope_add_mapping(root, "plet", create_builtin(builtin_plet));
-  scope_add_mapping(root, "lambda", create_builtin(builtin_lambda));
+  scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
+  scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
 
-  scope_add_mapping(root, "print", create_builtin(builtin_print));
+  scope_add_mapping(root, "PRINT", create_builtin(builtin_print));
 
   scope_add_mapping(root, "+", create_builtin(builtin_plus));
   scope_add_mapping(root, "-", create_builtin(builtin_sub));
   scope_add_mapping(root, "*", create_builtin(builtin_mult));
   scope_add_mapping(root, "/", create_builtin(builtin_div));
 
-  scope_add_mapping(root, "set", create_builtin(builtin_set));
+  scope_add_mapping(root, "SET", create_builtin(builtin_set));
 
   return root;
 }

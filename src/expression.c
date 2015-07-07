@@ -32,6 +32,15 @@ struct expr *create_int_expression(int value) {
   return e;
 }
 
+struct expr *create_bool_expression(bool value) {
+  // Malloc a new expression object
+  struct expr *e = malloc(sizeof(struct expr));
+  memset(e, 0, sizeof(struct expr));
+  e->type = BOOL_EXPR;
+  e->data.boolean_value = value;
+  return e;
+}
+
 struct expr *create_func_expression(struct expr *arguments, struct scope *closure,
                                     struct expr *body) {
   // Malloc a new expression object

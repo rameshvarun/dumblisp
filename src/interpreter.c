@@ -14,6 +14,10 @@
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
 
+  // TRUE and FALSE booleans
+  scope_add_mapping(root, "true", create_bool_expression(true));
+  scope_add_mapping(root, "false", create_bool_expression(false));
+
   scope_add_mapping(root, "let", create_builtin(builtin_let));
   scope_add_mapping(root, "defun", create_builtin(builtin_defun));
 

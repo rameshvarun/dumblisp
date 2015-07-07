@@ -60,6 +60,7 @@ struct expr {
 struct expr *create_builtin(builtin func_ptr);
 struct expr *create_empty_list();
 struct expr *create_int_expression(int value);
+struct expr *create_bool_expression(bool value);
 struct expr *create_func_expression(struct expr *arguments, struct scope *closure,
                                     struct expr *body);
 

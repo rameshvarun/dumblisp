@@ -13,6 +13,15 @@ A dumb lisp interpreter, made for practice.
 ```lisp
 (print "Hello World" 3)
 ```
+
+### (defun name (arg-a arg-b ...) stmnt-a stmnt-b ...)
+```lisp
+(defun fib (n)
+  (if (or (= n 0) (= n 1))
+    1
+    (+ (fib (- n 1)) (fib (- n 2)))))
+```
+
 ### (let ((var-a val-a) (var-b val-b) ...) expr-a expr-b ...)
 `let` creates a new scope, binds identifiers to values in that scope, and evaluates expresions.
 
@@ -29,6 +38,8 @@ A dumb lisp interpreter, made for practice.
 ```
 
 ### Arithmatic Operators (+, -, /, *)
+
+### Comparison Operators (=, <, >)
 
 ## TODO
 - Garbage collection

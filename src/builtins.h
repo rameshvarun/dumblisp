@@ -8,6 +8,7 @@ struct expr *builtin_print(struct scope *scope, struct expr *arguments);
 
 // Control flow
 struct expr *builtin_if(struct scope *scope, struct expr *arguments);
+struct expr *builtin_while(struct scope *scope, struct expr *arguments);
 
 // Integer comparison operators
 struct expr *builtin_eq(struct scope *scope, struct expr *arguments);

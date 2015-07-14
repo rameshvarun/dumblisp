@@ -26,6 +26,30 @@ struct expr *builtin_if(struct scope *scope, struct expr *arguments) {
   return create_empty_list();
 }
 
+struct expr *builtin_while(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL) {
+    fprintf(stderr, "if must have at least two arguments.\n");
+    exit(1);
+  }
+
+  while (true) {
+    // Evaulate the condition.
+    struct expr *cond = eval(scope, arguments);
+    assert(cond->type = BOOL_EXPR);
+
+    // If the condiiton evaluates to false, exit loop.
+    if (!cond->data.boolean_value)
+      break;
+
+    // Otherwise evaluate body statements.
+    for (struct expr *e = arguments->next; e != NULL; e = e->next) {
+      eval(scope, e);
+    }
+  }
+
+  return create_empty_list();
+}
+
 struct expr *builtin_or(struct scope *scope, struct expr *arguments) {
   if (arguments == NULL || arguments->next == NULL) {
     fprintf(stderr, "= must have at least two arguments.");

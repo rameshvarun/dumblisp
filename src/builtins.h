@@ -33,5 +33,9 @@ struct expr *builtin_set(struct scope *scope, struct expr *arguments);
 // Function creation
 struct expr *builtin_lambda(struct scope *scope, struct expr *arguments);
 struct expr *builtin_defun(struct scope *scope, struct expr *arguments);
+struct expr *builtin_defmacro(struct scope *scope, struct expr *arguments);
+
+// List manipulation
+struct expr *builtin_list(struct scope *scope, struct expr *arguments);
 
 #endif

@@ -42,7 +42,7 @@ struct expr *create_bool_expression(bool value) {
 }
 
 struct expr *create_func_expression(struct expr *arguments, struct scope *closure,
-                                    struct expr *body) {
+                                    struct expr *body, bool ismacro) {
   // Malloc a new expression object
   struct expr *e = malloc(sizeof(struct expr));
   memset(e, 0, sizeof(struct expr));
@@ -51,7 +51,7 @@ struct expr *create_func_expression(struct expr *arguments, struct scope *closur
   e->data.function_value.arguments = arguments;
   e->data.function_value.closure = closure;
   e->data.function_value.body = body;
-
+  e->data.function_value.ismacro = ismacro;
   return e;
 }
 
@@ -93,9 +93,16 @@ struct expr *eval(struct scope *scope, struct expr *e) {
              formal = formal->next) {
           assert(formal->type == SYMBOL_EXPR);
           if (actuals != NULL) {
-            scope_add_mapping(new_scope, formal->data.string_value, eval(scope, actuals));
+            // If this is a regular function, evaluate the argument. Otherwise, return expression,
+            // Since macros take in their arguments literally.
+            struct expr *actual_value =
+                head->data.function_value.ismacro ? actuals : eval(scope, actuals);
+            // Bind the actual value to the formal symbol.
+            scope_add_mapping(new_scope, formal->data.string_value, actual_value);
+            // Proceed to the next actual.
             actuals = actuals->next;
           } else {
+            // No more actuals, so simply bind the symbol to the empty list (NIL).
             scope_add_mapping(new_scope, formal->data.string_value, create_empty_list());
           }
         }
@@ -105,7 +112,9 @@ struct expr *eval(struct scope *scope, struct expr *e) {
              statement = statement->next) {
           last_value = eval(new_scope, statement);
         }
-        return last_value;
+
+        // If this is a regular function, we simply return the result.
+        return head->data.function_value.ismacro ? eval(scope, last_value) : last_value;
       } else {
         abort();
       }

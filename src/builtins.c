@@ -287,7 +287,7 @@ struct expr *builtin_lambda(struct scope *scope, struct expr *arguments) {
   }
 
   assert(arguments->type == LIST_EXPR);
-  return create_func_expression(arguments->data.head, scope, arguments->next);
+  return create_func_expression(arguments->data.head, scope, arguments->next, false);
 }
 
 struct expr *builtin_defun(struct scope *scope, struct expr *arguments) {
@@ -301,7 +301,22 @@ struct expr *builtin_defun(struct scope *scope, struct expr *arguments) {
 
   scope_add_mapping(
       scope, arguments->data.string_value,
-      create_func_expression(arguments->next->data.head, scope, arguments->next->next));
+      create_func_expression(arguments->next->data.head, scope, arguments->next->next, false));
+  return create_empty_list();
+}
+
+struct expr *builtin_defmacro(struct scope *scope, struct expr *arguments) {
+  if (arguments == NULL || arguments->next == NULL || arguments->next->next == NULL) {
+    fprintf(stderr, "defun must have at least three arguments.\n");
+    exit(1);
+  }
+
+  assert(arguments->type == SYMBOL_EXPR);
+  assert(arguments->next->type == LIST_EXPR);
+
+  scope_add_mapping(
+      scope, arguments->data.string_value,
+      create_func_expression(arguments->next->data.head, scope, arguments->next->next, true));
   return create_empty_list();
 }
 
@@ -315,4 +330,27 @@ struct expr *builtin_set(struct scope *scope, struct expr *arguments) {
   struct expr *val = eval(scope, arguments->next);
   scope_set_value(scope, arguments->data.string_value, val);
   return val;
+}
+
+struct expr *builtin_list(struct scope *scope, struct expr *arguments) {
+  // Malloc a new expression object
+  struct expr *list = create_empty_list();
+
+  // The current tail of the list.
+  struct expr *tail = NULL;
+
+  for (struct expr *arg = arguments; arg != NULL; arg = arg->next) {
+    struct expr *arg_value = eval(scope, arg);
+
+    if (tail == NULL) {
+      // If we haven't seen any elements yet, then arg_value is the head of the list.
+      list->data.head = arg_value;
+    } else {
+      // Otherwise, arg_value is the "next" of the current tail.
+      tail->next = arg_value;
+    }
+    tail = arg_value;
+  }
+
+  return list;
 }

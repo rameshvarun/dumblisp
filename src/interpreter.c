@@ -25,11 +25,14 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "TRUE", create_bool_expression(true));
   scope_add_mapping(root, "FALSE", create_bool_expression(false));
 
-  // Keywords
-  scope_add_mapping(root, "LET", create_builtin(builtin_let));
+  // Create functions and macros
   scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
-  scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
   scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
+  scope_add_mapping(root, "DEFMACRO", create_builtin(builtin_defmacro));
+
+  // Create and manipulate scopes
+  scope_add_mapping(root, "LET", create_builtin(builtin_let));
+  scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
   scope_add_mapping(root, "SET", create_builtin(builtin_set));
 
   // Print function
@@ -45,6 +48,9 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "=", create_builtin(builtin_eq));
   scope_add_mapping(root, "<", create_builtin(builtin_lt));
   scope_add_mapping(root, ">", create_builtin(builtin_gt));
+
+  // List manipulation
+  scope_add_mapping(root, "LIST", create_builtin(builtin_list));
 
   return root;
 }

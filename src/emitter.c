@@ -49,19 +49,11 @@ void emit_expression(expr *e) {
 
   // User-defined function object
   case FUNC_EXPR:
-    printf("<function args: (");
-    for (struct expr *arg = e->arguments; arg != NULL; arg = arg->tail) {
-      emit_expression(arg->head);
-      if (arg->tail != NULL)
-        printf(" ");
-    }
-    printf(") body: (");
-    for (struct expr *curr = e->body; curr != NULL; curr = curr->tail) {
-      emit_expression(curr->head);
-      if (curr->tail != NULL)
-        printf(" ");
-    }
-    printf(")>");
+    printf("<function args: ");
+    emit_expression(e->arguments);
+    printf(" body: ");
+    emit_expression(e->body);
+    printf(">");
     break;
   // Unkown expression type
   default:

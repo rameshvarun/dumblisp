@@ -55,6 +55,7 @@ typedef struct expr {
   };
 } expr;
 
+// Helper functions for construction expressions.
 expr *create_cell(expr *head, expr *tail);
 expr *create_builtin(builtin func_ptr);
 expr *create_int(int value);
@@ -63,4 +64,5 @@ expr *create_string(const char *value);
 expr *create_symbol(const char *value);
 expr *create_func(expr *arguments, scope *closure, expr *body, bool ismacro);
 
+// Evaluate an expression in the given scope.
 expr *eval(scope *scope, expr *e);

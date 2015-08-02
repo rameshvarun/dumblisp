@@ -13,11 +13,11 @@ expr *builtin_exit(scope *scope, expr *arguments);
 /* IO functions */
 expr *builtin_print(scope *scope, expr *arguments);
 
-// Control flow
+/* Control flow */
 expr *builtin_if(scope *scope, expr *arguments);
 expr *builtin_while(scope *scope, expr *arguments);
 
-// Integer comparison operators
+/* Integer comparison operators */
 expr *builtin_eq(scope *scope, expr *arguments);
 expr *builtin_lt(scope *scope, expr *arguments);
 expr *builtin_gt(scope *scope, expr *arguments);
@@ -33,12 +33,12 @@ expr *builtin_mult(scope *scope, expr *arguments);
 expr *builtin_sub(scope *scope, expr *arguments);
 expr *builtin_div(scope *scope, expr *arguments);
 
-// Set variables / create new scopes
+/* Set variables / create new scopes */
 expr *builtin_let(scope *scope, expr *arguments);
 expr *builtin_plet(scope *scope, expr *arguments);
 expr *builtin_set(scope *scope, expr *arguments);
 
-// Function creation
+/* Function creation */
 expr *builtin_lambda(scope *scope, expr *arguments);
 expr *builtin_defun(scope *scope, expr *arguments);
 expr *builtin_defmacro(scope *scope, expr *arguments);
@@ -49,3 +49,4 @@ expr *builtin_head(scope *scope, expr *arguments);
 expr *builtin_tail(scope *scope, expr *arguments);
 expr *builtin_nth(scope *scope, expr *arguments);
 expr *builtin_list(scope *scope, expr *arguments);
+expr *builtin_cons(scope *scope, expr *arguments);

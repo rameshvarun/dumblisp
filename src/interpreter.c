@@ -18,25 +18,25 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "EXIT", create_builtin(builtin_exit));
 
   // Control flow
-  // scope_add_mapping(root, "IF", create_builtin(builtin_if));
+  scope_add_mapping(root, "IF", create_builtin(builtin_if));
   // scope_add_mapping(root, "WHILE", create_builtin(builtin_while));
 
   // Boolean Operators
-  // scope_add_mapping(root, "OR", create_builtin(builtin_or));
+  scope_add_mapping(root, "OR", create_builtin(builtin_or));
 
   // TRUE and FALSE booleans
   scope_add_mapping(root, "TRUE", create_bool(true));
   scope_add_mapping(root, "FALSE", create_bool(false));
 
   // Create functions and macros
-  // scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
-  // scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
+  scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
+  scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
   // scope_add_mapping(root, "DEFMACRO", create_builtin(builtin_defmacro));
 
   // Create and manipulate scopes
-  // scope_add_mapping(root, "LET", create_builtin(builtin_let));
-  // scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
-  // scope_add_mapping(root, "SET", create_builtin(builtin_set));
+  scope_add_mapping(root, "LET", create_builtin(builtin_let));
+  scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
+  scope_add_mapping(root, "SET", create_builtin(builtin_set));
 
   // I/O Functions
   scope_add_mapping(root, "PRINT", create_builtin(builtin_print));
@@ -54,9 +54,11 @@ static struct scope *create_root_scope() {
 
   // List manipulation
   scope_add_mapping(root, "LEN", create_builtin(builtin_len));
+  scope_add_mapping(root, "NTH", create_builtin(builtin_nth));
   scope_add_mapping(root, "HEAD", create_builtin(builtin_head));
   scope_add_mapping(root, "TAIL", create_builtin(builtin_tail));
   scope_add_mapping(root, "LIST", create_builtin(builtin_list));
+  scope_add_mapping(root, "CONS", create_builtin(builtin_cons));
 
   return root;
 }

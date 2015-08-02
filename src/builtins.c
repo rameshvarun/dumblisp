@@ -4,20 +4,20 @@
 #include <assert.h>
 
 /* HELPER FUNCTIONS */
+static inline bool islist(expr* e) {
+  return e == NULL || e->type == CELL_EXPR;
+}
+
 static int len(expr *list) {
-  if (list == NULL)
-    return 0;
-  else {
-    assert(list->type == CELL_EXPR);
-    return 1 + len(list->tail);
-  }
+  assert(islist(list));
+  if (list == NULL) return 0;
+  else return 1 + len(list->tail);
 }
 
 static expr *nth(int n, expr *list) {
+  assert(islist(list));
   if (list == NULL)
     return NULL;
-
-  assert(list->type == CELL_EXPR);
   if (n == 0)
     return list->head;
   return nth(n - 1, list->tail);
@@ -73,25 +73,24 @@ expr *builtin_print(struct scope *scope, expr *arguments) {
 }
 
 /* CONTROL FLOW */
-/*expr *builtin_if(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->tail == NULL)
+expr *builtin_if(struct scope *scope, expr *arguments) {
+  int arglen = len(arguments);
+  if (arglen < 2)
     PANIC("IF must have at least two arguments.\n");
 
-  expr *cond = eval(scope, arguments->head);
+  expr *cond = eval(scope, nth(0, arguments));
   assert(cond->type = BOOL_EXPR);
 
   // If the condiiton evaluates to true
-  if (cond->data.boolean_value) {
-    return eval(scope, arguments->next);
-  }
+  if (cond->boolean_value)
+    return eval(scope, nth(1, arguments));
 
   // If the conditon evaluates to false
-  if (arguments->next->next != NULL) {
-    return eval(scope, arguments->next->next);
-  }
+  if (arglen > 2)
+    return eval(scope, nth(2, arguments));
 
   return NULL;
-}*/
+}
 
 /*expr *builtin_while(struct scope *scope, expr *arguments) {
   if (arguments == NULL || arguments->tail == NULL)
@@ -113,18 +112,19 @@ expr *builtin_print(struct scope *scope, expr *arguments) {
   }
 
   return create_empty_list();
-}
+}*/
 
-expr *builtin_or(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL) {
-    fprintf(stderr, "= must have at least two arguments.");
-  }
-  expr *first = eval(scope, arguments);
-  expr *second = eval(scope, arguments->next);
+expr *builtin_or(scope *scope, expr *arguments) {
+  if (len(arguments) < 2)
+    fprintf(stderr, "OR must have at least two arguments.");
+
+  // TODO: Multi-arg OR
+  expr *first = eval(scope, nth(0, arguments));
+  expr *second = eval(scope, nth(1, arguments));
   assert(first->type == BOOL_EXPR);
   assert(second->type == BOOL_EXPR);
-  return create_bool_expression(first->data.boolean_value || second->data.boolean_value);
-}*/
+  return create_bool(first->boolean_value || second->boolean_value);
+}
 
 /* COMPARISONS */
 
@@ -223,113 +223,113 @@ expr *builtin_div(struct scope *scope, expr *arguments) {
   return create_int(current_value);
 }
 
-/*
+/* Set variables / create new scopes */
 
 expr *builtin_let(struct scope *scope, expr *arguments) {
-  if (arguments == NULL) {
-    fprintf(stderr, "let must have at least one argument.\n");
-    exit(1);
-  }
+  if (len(arguments) < 2)
+    PANIC("LET must have at least two arguments.");
 
   struct scope *new_scope = scope_create(scope);
-  assert(arguments->type == LIST_EXPR);
+  assert(islist(arguments->head)); // The fist argument must be a list.
 
-  for (expr *mapping = arguments->data.head; mapping != NULL; mapping = mapping->next) {
-    assert(mapping->type == LIST_EXPR);
+  for (expr *mapping = arguments->head; mapping != NULL; mapping = mapping->tail) {
+    // Each mapping must be a list with two arguments.
+    assert(islist(mapping->head));
+    assert(len(mapping->head) == 2);
 
-    // Must have two arguments
-    assert(mapping->data.head != NULL);
-    assert(mapping->data.head->next != NULL);
-
-    expr *symb = mapping->data.head;
+    expr *symb = nth(0, mapping->head);
     assert(symb->type == SYMBOL_EXPR);
-    expr *val = eval(new_scope, mapping->data.head->next);
-    scope_add_mapping(new_scope, symb->data.string_value, val);
-
-    // TODO: Ensure that a symbol doesn't repeat
+    expr *val = eval(new_scope, nth(1, mapping->head));
+    scope_add_mapping(new_scope, symb->string_value, val);
   }
 
-  expr *last_value = create_empty_list();
-  for (expr *e = arguments->next; e != NULL; e = e->next) {
-    last_value = eval(new_scope, e);
-  }
-
+  expr *last_value = NULL;
+  for (expr *e = arguments->tail; e != NULL; e = e->tail)
+    last_value = eval(new_scope, e->head);
   return last_value;
 }
 
 expr *builtin_plet(struct scope *scope, expr *arguments) {
-  if (arguments == NULL) {
-    fprintf(stderr, "let must have at least one argument.\n");
-    exit(1);
-  }
+  if (len(arguments) < 2)
+    PANIC("PLET must have at least two arguments.");
 
   struct scope *new_scope = scope_create(scope);
-  assert(arguments->type == LIST_EXPR);
+  assert(islist(arguments->head)); // The fist argument must be a list.
 
-  for (expr *mapping = arguments->data.head; mapping != NULL; mapping = mapping->next) {
-    assert(mapping->type == LIST_EXPR);
+  for (expr *mapping = arguments->head; mapping != NULL; mapping = mapping->tail) {
+    // Each mapping must be a list with two arguments.
+    assert(islist(mapping->head));
+    assert(len(mapping->head) == 2);
 
-    // Must have two arguments
-    assert(mapping->data.head != NULL);
-    assert(mapping->data.head->next != NULL);
-
-    expr *symb = mapping->data.head;
+    expr *symb = nth(0, mapping->head);
     assert(symb->type == SYMBOL_EXPR);
-    expr *val = eval(new_scope, mapping->data.head->next);
-    scope_add_mapping(new_scope, symb->data.string_value, val);
-
-    // TODO: Ensure that a symbol doesn't repeat
+    expr *val = eval(scope, nth(1, mapping->head));
+    scope_add_mapping(new_scope, symb->string_value, val);
   }
 
-  expr *last_value = create_empty_list();
-  for (expr *e = arguments->next; e != NULL; e = e->next) {
-    last_value = eval(scope, e);
-  }
-
+  expr *last_value = NULL;
+  for (expr *e = arguments->tail; e != NULL; e = e->tail)
+    last_value = eval(new_scope, e->head);
   return last_value;
 }
 
-expr *builtin_exit(struct scope *scope, expr *arguments) { return NULL; }
+expr *builtin_set(struct scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("SET must have two arguments.");
+
+  assert(arguments->head->type = SYMBOL_EXPR);
+  expr *val = eval(scope, arguments->tail->head);
+
+  // If a mapping exists in the scope chain, modify that mapping. Otherwise, create new mapping in
+  // the current scope.
+  if (scope_lookup(scope, arguments->head->string_value) != NULL)
+    scope_set_value(scope, arguments->head->string_value, val);
+  else
+    scope_add_mapping(scope, arguments->head->string_value, val);
+
+  return val;
+}
+
+/*
 
 expr *builtin_strlen(struct scope *scope, expr *arguments) { return NULL; }
 
 expr *builtin_strcmp(struct scope *scope, expr *arguments) { return NULL; }
 
 expr *builtin_strcat(struct scope *scope, expr *arguments) { return NULL; }
+*/
 
+/* Function Creation */
 expr *builtin_lambda(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL) {
-    fprintf(stderr, "lambda must have at least two arguments.\n");
-    exit(1);
-  }
-
-  assert(arguments->type == LIST_EXPR);
-  return create_func_expression(arguments->data.head, scope, arguments->next, false);
+  if (len(arguments) < 2)
+    PANIC("LAMBDA must have at least two arguments.\n");
+  assert(islist(arguments->head));
+  return create_func(arguments->head, scope, arguments->tail, false);
 }
 
 expr *builtin_defun(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL || arguments->next->next == NULL) {
-    fprintf(stderr, "defun must have at least three arguments.\n");
-    exit(1);
-  }
+  if (len(arguments) < 3)
+    PANIC("DEFUN must have at least three arguments.\n");
 
-  assert(arguments->type == SYMBOL_EXPR);
-  assert(arguments->next->type == LIST_EXPR);
+  assert(arguments->head->type == SYMBOL_EXPR);
+  assert(islist(nth(2, arguments)));
 
-  scope_add_mapping(
-      scope, arguments->data.string_value,
-      create_func_expression(arguments->next->data.head, scope, arguments->next->next, false));
-  return create_empty_list();
+  if (scope_probe(scope, arguments->head->string_value) == NULL)
+    scope_add_mapping(scope, arguments->head->string_value,
+                      create_func(nth(1, arguments), scope, arguments->tail->tail, false));
+  else
+    PANIC("DEFUN tried to create mapping for %s, but one already existed.",
+          arguments->head->string_value);
+  return NULL;
 }
 
+/*
 expr *builtin_defmacro(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL || arguments->next->next == NULL) {
-    fprintf(stderr, "defun must have at least three arguments.\n");
-    exit(1);
-  }
+  if (len(arguments) < 3)
+    PANIC("DEFUN must have at least three arguments.\n");
 
-  assert(arguments->type == SYMBOL_EXPR);
-  assert(arguments->next->type == LIST_EXPR);
+  assert(arguments->head->type == SYMBOL_EXPR);
+  assert(nth(2, arguments)->type == CELL_EXPR);
 
   scope_add_mapping(
       scope, arguments->data.string_value,
@@ -337,17 +337,7 @@ expr *builtin_defmacro(struct scope *scope, expr *arguments) {
   return create_empty_list();
 }
 
-expr *builtin_set(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL) {
-    fprintf(stderr, "set must have at least three arguments.\n");
-    exit(1);
-  }
-
-  assert(arguments->type = SYMBOL_EXPR);
-  expr *val = eval(scope, arguments->next);
-  scope_set_value(scope, arguments->data.string_value, val);
-  return val;
-}*/
+*/
 
 // List manipulation
 expr *builtin_len(scope *scope, expr *arguments) {
@@ -367,15 +357,22 @@ expr *builtin_tail(scope *scope, expr *arguments) {
 }
 expr *builtin_nth(scope *scope, expr *arguments) {
   if (len(arguments) != 2)
-    PANIC("NTH must have exactly one argument.");
+    PANIC("NTH must have exactly two arguments.");
   expr *n_expr = eval(scope, nth(0, arguments));
   expr *list_expr = eval(scope, nth(1, arguments));
-  assert(n_expr->type == INT_EXPR);
-  assert(list_expr->type == CELL_EXPR);
-  return nth(n_expr->int_value, eval(scope, list_expr));
+  
+  assert(n_expr->type == INT_EXPR); // First arg must evaluate to an integer.
+  assert(islist(list_expr)); // Second arg must evaluate to list.
+
+  return nth(n_expr->int_value, list_expr);
 }
 expr *builtin_list(scope *scope, expr *arguments) {
   if (arguments == NULL)
     return NULL;
   return create_cell(eval(scope, arguments->head), builtin_list(scope, arguments->tail));
+}
+expr *builtin_cons(scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("CONS must have exactly one argument.");
+  return create_cell(eval(scope, nth(0, arguments)), eval(scope, nth(1, arguments)));
 }

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "string.h"
 #include "assert.h"
+#include "emitter.h"
 
 static inline expr *make_expr() {
   expr *e = malloc(sizeof(expr));

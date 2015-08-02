@@ -1,15 +1,10 @@
-#ifndef LEXER_H
-#define LEXER_H
-
-// Maximum string and symbol name sizes (for simplicity)
-#define MAX_LITERAL_SIZE 4096
-#define MAX_INTEGER_LITERAL_SIZE 4096
-#define MAX_SYMBOL_SIZE 4096
+#pragma once
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "defs.h"
 
-// An enum representing the possible tokens in a dumblisp program
+// An enum representing the possible tokens in a dumblisp program.
 typedef enum {
   LEFT_PAREN_TOKEN,
   RIGHT_PAREN_TOKEN,
@@ -77,5 +72,3 @@ bool is_letter(char c);
 bool is_alphanumeric(char c);
 
 void test_lexer(lexing_context *ctx);
-
-#endif

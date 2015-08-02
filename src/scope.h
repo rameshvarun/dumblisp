@@ -1,5 +1,4 @@
-#ifndef SCOPE_H
-#define SCOPE_H
+#pragma once
 
 struct scope;
 struct mapping;
@@ -13,10 +12,10 @@ struct mapping {
 };
 
 // A scope represents a set of bindings
-struct scope {
+typedef struct scope {
   struct scope *parent;     // The parent scope in the heirarchy
   struct mapping *mappings; // The mappings in the current scope
-};
+} scope;
 
 // Traverse the scope heirarchy, returning the first expression that matches
 // the symbol.
@@ -33,5 +32,3 @@ void scope_add_mapping(struct scope *scope, const char *symbol, struct expr *val
 
 // Sets the value of an existing mapping.
 void scope_set_value(struct scope *scope, const char *symbol, struct expr *value);
-
-#endif

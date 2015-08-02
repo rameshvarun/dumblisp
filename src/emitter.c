@@ -1,31 +1,42 @@
 #include "emitter.h"
 
-void emit_expression(struct expr *e) {
-  if (e->quoted)
-    printf("'");
+void emit_expression(expr *e) {
+  // A NULL pointer is the same as the empty list.
+  if (e == NULL) {
+    printf("()");
+    return;
+  }
 
   switch (e->type) {
   // String expressions are printed out in quotes
   case STRING_EXPR:
-    printf("\"%s\"", e->data.string_value);
+    printf("\"%s\"", e->string_value);
     break;
 
   // Int expressions are directly printed
   case INT_EXPR:
-    printf("%d", e->data.int_value);
+    printf("%d", e->int_value);
+    break;
+
+  // Boolean expressions either print TRUE or FALSE
+  case BOOL_EXPR:
+    if (e->boolean_value)
+      printf("TRUE");
+    else
+      printf("FALSE");
     break;
 
   // Symbols are directly printed
   case SYMBOL_EXPR:
-    printf("%s", e->data.string_value);
+    printf("%s", e->string_value);
     break;
 
   // Lists are printed, wrapped in parentheses
-  case LIST_EXPR:
+  case CELL_EXPR:
     printf("(");
-    for (struct expr *curr = e->data.head; curr != NULL; curr = curr->next) {
-      emit_expression(curr);
-      if (curr->next != NULL)
+    for (struct expr *curr = e; curr != NULL; curr = curr->tail) {
+      emit_expression(curr->head);
+      if (curr->tail != NULL)
         printf(" ");
     }
     printf(")");
@@ -39,15 +50,15 @@ void emit_expression(struct expr *e) {
   // User-defined function object
   case FUNC_EXPR:
     printf("<function args: (");
-    for (struct expr *arg = e->data.function_value.arguments; arg != NULL; arg = arg->next) {
-      emit_expression(arg);
-      if (arg->next != NULL)
+    for (struct expr *arg = e->arguments; arg != NULL; arg = arg->tail) {
+      emit_expression(arg->head);
+      if (arg->tail != NULL)
         printf(" ");
     }
     printf(") body: (");
-    for (struct expr *curr = e->data.function_value.body; curr != NULL; curr = curr->next) {
-      emit_expression(curr);
-      if (curr->next != NULL)
+    for (struct expr *curr = e->body; curr != NULL; curr = curr->tail) {
+      emit_expression(curr->head);
+      if (curr->tail != NULL)
         printf(" ");
     }
     printf(")>");

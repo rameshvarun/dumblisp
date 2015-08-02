@@ -1,12 +1,16 @@
 CC=gcc
 LIBS=-lreadline
 CFLAGS=-std=c99
+DEBUGFLAGS=-ggdb
 
 .PHONY: default test clean
 
 default: dumblisp
 
 OBJS=src/lexer.o src/interpreter.o src/parser.o src/emitter.o src/scope.o src/expression.o src/builtins.o
+
+debug: $(OBJS)
+	gcc -o $@ $^ $(CFLAGS) $(DEBUGFLAGS) $(LIBS)
 
 dumblisp: $(OBJS)
 	gcc -o $@ $^ $(CFLAGS) $(LIBS)

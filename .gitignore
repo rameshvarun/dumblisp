@@ -1,4 +1,5 @@
 *~
 *.o
 dumblisp
+debug
 *.log

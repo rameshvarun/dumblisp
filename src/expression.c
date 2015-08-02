@@ -4,64 +4,68 @@
 #include "string.h"
 #include "assert.h"
 
-struct expr *create_builtin(builtin func_ptr) {
-  // Malloc a new expression object
-  struct expr *e = malloc(sizeof(struct expr));
-  memset(e, 0, sizeof(struct expr));
-
-  e->type = BUILTIN_EXPR;
-  e->data.func_ptr = func_ptr;
-
+static inline expr *make_expr() {
+  expr *e = malloc(sizeof(expr));
+  memset(e, 0, sizeof(expr));
   return e;
 }
 
-struct expr *create_empty_list() {
-  // Malloc a new expression object
-  struct expr *e = malloc(sizeof(struct expr));
-  memset(e, 0, sizeof(struct expr));
-  e->type = LIST_EXPR;
+expr *create_cell(expr *head, expr *tail) {
+  expr *e = make_expr();
+  e->type = CELL_EXPR;
+  e->head = head;
+  e->tail = tail;
   return e;
 }
 
-struct expr *create_int_expression(int value) {
-  // Malloc a new expression object
-  struct expr *e = malloc(sizeof(struct expr));
-  memset(e, 0, sizeof(struct expr));
+expr *create_int(int value) {
+  expr *e = make_expr();
   e->type = INT_EXPR;
-  e->data.int_value = value;
+  e->int_value = value;
   return e;
 }
 
-struct expr *create_bool_expression(bool value) {
-  // Malloc a new expression object
-  struct expr *e = malloc(sizeof(struct expr));
-  memset(e, 0, sizeof(struct expr));
+expr *create_bool(bool value) {
+  expr *e = make_expr();
   e->type = BOOL_EXPR;
-  e->data.boolean_value = value;
+  e->boolean_value = value;
   return e;
 }
 
-struct expr *create_func_expression(struct expr *arguments, struct scope *closure,
-                                    struct expr *body, bool ismacro) {
-  // Malloc a new expression object
-  struct expr *e = malloc(sizeof(struct expr));
-  memset(e, 0, sizeof(struct expr));
+expr *create_string(const char *value) {
+  expr *e = make_expr();
+  e->type = STRING_EXPR;
+  e->string_value = value;
+  return e;
+}
 
+expr *create_symbol(const char *value) {
+  expr *e = make_expr();
+  e->type = SYMBOL_EXPR;
+  e->string_value = value;
+  return e;
+}
+
+expr *create_builtin(builtin func_ptr) {
+  expr *e = make_expr();
+  e->type = BUILTIN_EXPR;
+  e->func_ptr = func_ptr;
+  return e;
+}
+
+expr *create_func(expr *arguments, struct scope *closure, expr *body, bool ismacro) {
+  expr *e = make_expr();
   e->type = FUNC_EXPR;
-  e->data.function_value.arguments = arguments;
-  e->data.function_value.closure = closure;
-  e->data.function_value.body = body;
-  e->data.function_value.ismacro = ismacro;
+  e->arguments = arguments;
+  e->closure = closure;
+  e->body = body;
+  e->ismacro = ismacro;
   return e;
 }
 
-struct expr *eval(struct scope *scope, struct expr *e) {
-  // If this expression is quoted, then evaling it returns
-  // the expression, unquoted.
-  if (e->quoted) {
-    e->quoted = false;
-    return e;
-  }
+expr *eval(scope *scope, expr *e) {
+  if (e == NULL)
+    return NULL;
 
   switch (e->type) {
   // String and Integer expressions evaluate to themselves.
@@ -69,61 +73,51 @@ struct expr *eval(struct scope *scope, struct expr *e) {
   case INT_EXPR:
     return e;
   case SYMBOL_EXPR: {
-    struct expr *value = scope_lookup(scope, e->data.string_value);
-    if (!value) {
-      fprintf(stderr, "Symbol %s not bound to any value\n", e->data.string_value);
-      exit(1);
-    }
+    expr *value = scope_lookup(scope, e->string_value);
+    if (!value)
+      PANIC("Symbol %s not bound to any value\n", e->string_value);
     return value;
-  case LIST_EXPR: {
-    // Empty list evaualtes to empty list
-    if (e->data.head == NULL)
-      return create_empty_list();
-    else {
-      struct expr *head = eval(scope, e->data.head);
-      if (head->type == BUILTIN_EXPR) {
-        // Call the built-in construct.
-        return head->data.func_ptr(scope, e->data.head->next);
-      } else if (head->type == FUNC_EXPR) {
-        // Call the function
-        struct scope *new_scope = scope_create(head->data.function_value.closure);
-
-        struct expr *actuals = e->data.head->next;
-        for (struct expr *formal = head->data.function_value.arguments; formal != NULL;
-             formal = formal->next) {
-          assert(formal->type == SYMBOL_EXPR);
-          if (actuals != NULL) {
-            // If this is a regular function, evaluate the argument. Otherwise, return expression,
-            // Since macros take in their arguments literally.
-            struct expr *actual_value =
-                head->data.function_value.ismacro ? actuals : eval(scope, actuals);
-            // Bind the actual value to the formal symbol.
-            scope_add_mapping(new_scope, formal->data.string_value, actual_value);
-            // Proceed to the next actual.
-            actuals = actuals->next;
-          } else {
-            // No more actuals, so simply bind the symbol to the empty list (NIL).
-            scope_add_mapping(new_scope, formal->data.string_value, create_empty_list());
-          }
-        }
-
-        struct expr *last_value = create_empty_list();
-        for (struct expr *statement = head->data.function_value.body; statement != NULL;
-             statement = statement->next) {
-          last_value = eval(new_scope, statement);
-        }
-
-        // If this is a regular function, we simply return the result.
-        return head->data.function_value.ismacro ? eval(scope, last_value) : last_value;
-      } else {
-        abort();
-      }
-    }
   }
+  case CELL_EXPR: {
+    expr *head = eval(scope, e->head);
+    if (head->type == BUILTIN_EXPR) {
+      // Call the built-in construct.
+      return head->func_ptr(scope, e->tail);
+    } else if (head->type == FUNC_EXPR) {
+      // Call the function.
+      struct scope *new_scope = scope_create(head->closure);
+
+      expr *actuals = e->tail;
+      for (expr *formal = head->arguments; formal != NULL; formal = formal->tail) {
+        expr *formal_expr = formal->head;
+        assert(formal_expr->type == SYMBOL_EXPR);
+        if (actuals != NULL) {
+          // If this is a regular function, evaluate the argument. Otherwise, return expression,
+          // Since macros take in their arguments literally.
+          expr *actual_value = head->ismacro ? actuals->head : eval(scope, actuals->head);
+          // Bind the actual value to the formal symbol.
+          scope_add_mapping(new_scope, formal_expr->string_value, actual_value);
+          // Proceed to the next actual.
+          actuals = actuals->tail;
+        } else {
+          // No more actuals, so simply bind the symbol to the empty list (NIL).
+          scope_add_mapping(new_scope, formal_expr->string_value, NULL);
+        }
+      }
+
+      // Evaulate the body of the function
+      struct expr *last_value = NULL;
+      for (struct expr *statement = head->body; statement != NULL; statement = statement->tail) {
+        last_value = eval(new_scope, statement->head);
+      }
+
+      // If this is a regular function, we simply return the result.
+      return head->ismacro ? eval(scope, last_value) : last_value;
+    } else {
+      abort();
+    }
   }
   default:
-    fprintf(stderr, "Unkown expression type.\n");
-    exit(1);
-    return NULL;
+    PANIC("Unkown expression type.\n");
   }
 }

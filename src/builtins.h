@@ -1,41 +1,51 @@
-#ifndef BUILTINS_H
-#define BUILTINS_H
+#pragma once
 
 #include "scope.h"
 #include "expression.h"
+#include "defs.h"
 
-// IO functions
-struct expr *builtin_print(struct scope *scope, struct expr *arguments);
+/* ESSENTIAL BUILTINS */
+// Return the argument directly, without evaluating.
+expr *builtin_quote(scope *scope, expr *arguments);
+// Exit with a status code. If no code is provided, exit with status code 0.
+expr *builtin_exit(scope *scope, expr *arguments);
+
+/* IO functions */
+expr *builtin_print(scope *scope, expr *arguments);
 
 // Control flow
-struct expr *builtin_if(struct scope *scope, struct expr *arguments);
-struct expr *builtin_while(struct scope *scope, struct expr *arguments);
+expr *builtin_if(scope *scope, expr *arguments);
+expr *builtin_while(scope *scope, expr *arguments);
 
 // Integer comparison operators
-struct expr *builtin_eq(struct scope *scope, struct expr *arguments);
-struct expr *builtin_lt(struct scope *scope, struct expr *arguments);
-struct expr *builtin_gt(struct scope *scope, struct expr *arguments);
+expr *builtin_eq(scope *scope, expr *arguments);
+expr *builtin_lt(scope *scope, expr *arguments);
+expr *builtin_gt(scope *scope, expr *arguments);
 
 // Boolean operators
-struct expr *builtin_or(struct scope *scope, struct expr *arguments);
+expr *builtin_or(scope *scope, expr *arguments);
+expr *builtin_and(scope *scope, expr *arguments);
+expr *builtin_not(scope *scope, expr *arguments);
 
-// Arithmatic operators
-struct expr *builtin_plus(struct scope *scope, struct expr *arguments);
-struct expr *builtin_mult(struct scope *scope, struct expr *arguments);
-struct expr *builtin_sub(struct scope *scope, struct expr *arguments);
-struct expr *builtin_div(struct scope *scope, struct expr *arguments);
+/* Arithmatic operators */
+expr *builtin_plus(scope *scope, expr *arguments);
+expr *builtin_mult(scope *scope, expr *arguments);
+expr *builtin_sub(scope *scope, expr *arguments);
+expr *builtin_div(scope *scope, expr *arguments);
 
 // Set variables / create new scopes
-struct expr *builtin_let(struct scope *scope, struct expr *arguments);
-struct expr *builtin_plet(struct scope *scope, struct expr *arguments);
-struct expr *builtin_set(struct scope *scope, struct expr *arguments);
+expr *builtin_let(scope *scope, expr *arguments);
+expr *builtin_plet(scope *scope, expr *arguments);
+expr *builtin_set(scope *scope, expr *arguments);
 
 // Function creation
-struct expr *builtin_lambda(struct scope *scope, struct expr *arguments);
-struct expr *builtin_defun(struct scope *scope, struct expr *arguments);
-struct expr *builtin_defmacro(struct scope *scope, struct expr *arguments);
+expr *builtin_lambda(scope *scope, expr *arguments);
+expr *builtin_defun(scope *scope, expr *arguments);
+expr *builtin_defmacro(scope *scope, expr *arguments);
 
 // List manipulation
-struct expr *builtin_list(struct scope *scope, struct expr *arguments);
-
-#endif
+expr *builtin_len(scope *scope, expr *arguments);
+expr *builtin_head(scope *scope, expr *arguments);
+expr *builtin_tail(scope *scope, expr *arguments);
+expr *builtin_nth(scope *scope, expr *arguments);
+expr *builtin_list(scope *scope, expr *arguments);

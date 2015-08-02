@@ -13,7 +13,9 @@ static expr *parse_list(lexing_context *ctx) {
   // If not, push the token pack onto the lexer stack.
   unget_token(ctx, &token);
 
-  return create_cell(parse_expression(ctx), parse_list(ctx));
+  expr *head = parse_expression(ctx);
+  expr *tail = parse_list(ctx);
+  return create_cell(head, tail);
 }
 
 // Implementation of a recursive-descent parser

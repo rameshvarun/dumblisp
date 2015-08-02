@@ -110,7 +110,7 @@ expr *builtin_while(struct scope *scope, expr *arguments) {
       eval(scope, e->head);
     }
   }
-  
+
   return NULL;
 }
 
@@ -323,21 +323,21 @@ expr *builtin_defun(struct scope *scope, expr *arguments) {
   return NULL;
 }
 
-/*
 expr *builtin_defmacro(struct scope *scope, expr *arguments) {
   if (len(arguments) < 3)
     PANIC("DEFUN must have at least three arguments.\n");
 
   assert(arguments->head->type == SYMBOL_EXPR);
-  assert(nth(2, arguments)->type == CELL_EXPR);
+  assert(islist(nth(2, arguments)));
 
-  scope_add_mapping(
-      scope, arguments->data.string_value,
-      create_func_expression(arguments->next->data.head, scope, arguments->next->next, true));
-  return create_empty_list();
+  if (scope_probe(scope, arguments->head->string_value) == NULL)
+    scope_add_mapping(scope, arguments->head->string_value,
+                      create_func(nth(1, arguments), scope, arguments->tail->tail, true));
+  else
+    PANIC("DEFMACRO tried to create mapping for %s, but one already existed.",
+          arguments->head->string_value);
+  return NULL;
 }
-
-*/
 
 // List manipulation
 expr *builtin_len(scope *scope, expr *arguments) {

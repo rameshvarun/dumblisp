@@ -31,7 +31,7 @@ static struct scope *create_root_scope() {
   // Create functions and macros
   scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
   scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
-  // scope_add_mapping(root, "DEFMACRO", create_builtin(builtin_defmacro));
+  scope_add_mapping(root, "DEFMACRO", create_builtin(builtin_defmacro));
 
   // Create and manipulate scopes
   scope_add_mapping(root, "LET", create_builtin(builtin_let));

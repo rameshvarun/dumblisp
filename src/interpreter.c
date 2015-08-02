@@ -3,12 +3,51 @@
 #include "emitter.h"
 #include "scope.h"
 #include "builtins.h"
+#include "lib.h"
 
 #include "stdlib.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
 #define REPL_LINE_MAX 4096
+
+static expr *loadfile(scope *scope, const char *filename) {
+  lexing_context ctx;
+  create_file_lexer(&ctx, filename);
+
+  expr *last_value = NULL;
+  while (true) {
+    token_t token;
+    get_next_token(&ctx, &token);
+
+    if (token.type == EOF_TOKEN)
+      break;
+
+    unget_token(&ctx, &token);
+    struct expr *e = parse_expression(&ctx);
+    last_value = eval(scope, e);
+  }
+  return last_value;
+}
+
+static expr *loadstring(scope *scope, const char *source) {
+  lexing_context ctx;
+  create_string_lexer(&ctx, source);
+
+  expr *last_value = NULL;
+  while (true) {
+    token_t token;
+    get_next_token(&ctx, &token);
+
+    if (token.type == EOF_TOKEN)
+      break;
+
+    unget_token(&ctx, &token);
+    struct expr *e = parse_expression(&ctx);
+    last_value = eval(scope, e);
+  }
+  return last_value;
+}
 
 // Creates the root scope of the program, populating it with the necessary built-ins.
 static struct scope *create_root_scope() {
@@ -60,6 +99,9 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "LIST", create_builtin(builtin_list));
   scope_add_mapping(root, "CONS", create_builtin(builtin_cons));
 
+  // Load library functions.
+  loadstring(root, (const char *)src_lib_lisp);
+
   return root;
 }
 
@@ -70,13 +112,8 @@ void run_repl() {
     // Read line from standard in
     char *line = readline(">> ");
 
-    // Create a lexing context on the given line
-    lexing_context ctx;
-    create_string_lexer(&ctx, line);
-    struct expr *e = parse_expression(&ctx);
-
     // Evaluate expression
-    struct expr *result = eval(root, e);
+    struct expr *result = loadstring(root, line);
 
     // Print back out result
     printf("\n => ");
@@ -95,21 +132,7 @@ int main(int argc, char **argv) {
 
   // One argument means a file to load
   if (argc == 2) {
-    lexing_context ctx;
-    create_file_lexer(&ctx, argv[1]);
-
-    struct scope *root = create_root_scope();
-
-    while (true) {
-      token_t token;
-      get_next_token(&ctx, &token);
-
-      if (token.type == EOF_TOKEN)
-        break;
-
-      unget_token(&ctx, &token);
-      struct expr *e = parse_expression(&ctx);
-      eval(root, e);
-    }
+    scope *root = create_root_scope();
+    loadfile(root, argv[1]);
   }
 }

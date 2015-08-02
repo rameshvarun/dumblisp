@@ -81,6 +81,8 @@ expr *eval(scope *scope, expr *e) {
   }
   case CELL_EXPR: {
     expr *head = eval(scope, e->head);
+    if (head == NULL)
+      PANIC("() is not a function.");
     if (head->type == BUILTIN_EXPR) {
       // Call the built-in construct.
       return head->func_ptr(scope, e->tail);
@@ -115,7 +117,7 @@ expr *eval(scope *scope, expr *e) {
       // If this is a regular function, we simply return the result.
       return head->ismacro ? eval(scope, last_value) : last_value;
     } else {
-      abort();
+      PANIC("Tried to execute something which is not a function or a macro.");
     }
   }
   default:

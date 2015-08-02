@@ -4,14 +4,14 @@
 #include <assert.h>
 
 /* HELPER FUNCTIONS */
-static inline bool islist(expr* e) {
-  return e == NULL || e->type == CELL_EXPR;
-}
+static inline bool islist(expr *e) { return e == NULL || e->type == CELL_EXPR; }
 
 static int len(expr *list) {
   assert(islist(list));
-  if (list == NULL) return 0;
-  else return 1 + len(list->tail);
+  if (list == NULL)
+    return 0;
+  else
+    return 1 + len(list->tail);
 }
 
 static expr *nth(int n, expr *list) {
@@ -360,9 +360,9 @@ expr *builtin_nth(scope *scope, expr *arguments) {
     PANIC("NTH must have exactly two arguments.");
   expr *n_expr = eval(scope, nth(0, arguments));
   expr *list_expr = eval(scope, nth(1, arguments));
-  
+
   assert(n_expr->type == INT_EXPR); // First arg must evaluate to an integer.
-  assert(islist(list_expr)); // Second arg must evaluate to list.
+  assert(islist(list_expr));        // Second arg must evaluate to list.
 
   return nth(n_expr->int_value, list_expr);
 }

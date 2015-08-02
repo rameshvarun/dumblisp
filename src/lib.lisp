@@ -23,3 +23,9 @@
 ;; Negation
 (defmacro ~ (x)
 	(list '- 0 x))
+
+(defmacro square (x)
+	(list '* x x))
+
+(defmacro quit ()
+	(list 'exit 0))

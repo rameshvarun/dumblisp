@@ -6,6 +6,8 @@
 #include "lib.h"
 
 #include "stdlib.h"
+#include "stringpool.h"
+
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -53,51 +55,51 @@ static expr *loadstring(scope *scope, const char *source) {
 static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
 
-  scope_add_mapping(root, "QUOTE", create_builtin(builtin_quote));
-  scope_add_mapping(root, "EXIT", create_builtin(builtin_exit));
+  scope_add_mapping(root, stringpool_add("QUOTE"), create_builtin(builtin_quote));
+  scope_add_mapping(root, stringpool_add("EXIT"), create_builtin(builtin_exit));
 
   // Control flow
-  scope_add_mapping(root, "IF", create_builtin(builtin_if));
-  scope_add_mapping(root, "WHILE", create_builtin(builtin_while));
+  scope_add_mapping(root, stringpool_add("IF"), create_builtin(builtin_if));
+  scope_add_mapping(root, stringpool_add("WHILE"), create_builtin(builtin_while));
 
   // Boolean Operators
-  scope_add_mapping(root, "OR", create_builtin(builtin_or));
+  scope_add_mapping(root, stringpool_add("OR"), create_builtin(builtin_or));
 
   // TRUE and FALSE booleans
-  scope_add_mapping(root, "TRUE", create_bool(true));
-  scope_add_mapping(root, "FALSE", create_bool(false));
+  scope_add_mapping(root, stringpool_add("TRUE"), create_bool(true));
+  scope_add_mapping(root, stringpool_add("FALSE"), create_bool(false));
 
   // Create functions and macros
-  scope_add_mapping(root, "DEFUN", create_builtin(builtin_defun));
-  scope_add_mapping(root, "LAMBDA", create_builtin(builtin_lambda));
-  scope_add_mapping(root, "DEFMACRO", create_builtin(builtin_defmacro));
+  scope_add_mapping(root, stringpool_add("DEFUN"), create_builtin(builtin_defun));
+  scope_add_mapping(root, stringpool_add("LAMBDA"), create_builtin(builtin_lambda));
+  scope_add_mapping(root, stringpool_add("DEFMACRO"), create_builtin(builtin_defmacro));
 
   // Create and manipulate scopes
-  scope_add_mapping(root, "LET", create_builtin(builtin_let));
-  scope_add_mapping(root, "PLET", create_builtin(builtin_plet));
-  scope_add_mapping(root, "SET", create_builtin(builtin_set));
+  scope_add_mapping(root, stringpool_add("LET"), create_builtin(builtin_let));
+  scope_add_mapping(root, stringpool_add("PLET"), create_builtin(builtin_plet));
+  scope_add_mapping(root, stringpool_add("SET"), create_builtin(builtin_set));
 
   // I/O Functions
-  scope_add_mapping(root, "PRINT", create_builtin(builtin_print));
+  scope_add_mapping(root, stringpool_add("PRINT"), create_builtin(builtin_print));
 
   // Arithmatic operators
-  scope_add_mapping(root, "+", create_builtin(builtin_plus));
-  scope_add_mapping(root, "-", create_builtin(builtin_sub));
-  scope_add_mapping(root, "*", create_builtin(builtin_mult));
-  scope_add_mapping(root, "/", create_builtin(builtin_div));
+  scope_add_mapping(root, stringpool_add("+"), create_builtin(builtin_plus));
+  scope_add_mapping(root, stringpool_add("-"), create_builtin(builtin_sub));
+  scope_add_mapping(root, stringpool_add("*"), create_builtin(builtin_mult));
+  scope_add_mapping(root, stringpool_add("/"), create_builtin(builtin_div));
 
   // Comparison operators
-  scope_add_mapping(root, "=", create_builtin(builtin_eq));
-  scope_add_mapping(root, "<", create_builtin(builtin_lt));
-  scope_add_mapping(root, ">", create_builtin(builtin_gt));
+  scope_add_mapping(root, stringpool_add("="), create_builtin(builtin_eq));
+  scope_add_mapping(root, stringpool_add("<"), create_builtin(builtin_lt));
+  scope_add_mapping(root, stringpool_add(">"), create_builtin(builtin_gt));
 
   // List manipulation
-  scope_add_mapping(root, "LEN", create_builtin(builtin_len));
-  scope_add_mapping(root, "NTH", create_builtin(builtin_nth));
-  scope_add_mapping(root, "HEAD", create_builtin(builtin_head));
-  scope_add_mapping(root, "TAIL", create_builtin(builtin_tail));
-  scope_add_mapping(root, "LIST", create_builtin(builtin_list));
-  scope_add_mapping(root, "CONS", create_builtin(builtin_cons));
+  scope_add_mapping(root, stringpool_add("LEN"), create_builtin(builtin_len));
+  scope_add_mapping(root, stringpool_add("NTH"), create_builtin(builtin_nth));
+  scope_add_mapping(root, stringpool_add("HEAD"), create_builtin(builtin_head));
+  scope_add_mapping(root, stringpool_add("TAIL"), create_builtin(builtin_tail));
+  scope_add_mapping(root, stringpool_add("LIST"), create_builtin(builtin_list));
+  scope_add_mapping(root, stringpool_add("CONS"), create_builtin(builtin_cons));
 
   // Load library functions.
   loadstring(root, (const char *)src_lib_lisp);

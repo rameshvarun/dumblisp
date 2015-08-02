@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "stringpool.h"
 #include <strings.h>
 
 // Recursive helper funtion for parsing a list.
@@ -28,7 +29,8 @@ struct expr *parse_expression(lexing_context *ctx) {
   case EOF_TOKEN:
     PANIC("Parse Error: Unexpected EOF token\n");
   case QUOTE_TOKEN:
-    return create_cell(create_symbol("QUOTE"), create_cell(parse_expression(ctx), NULL));
+    return create_cell(create_symbol(stringpool_add("QUOTE")),
+                       create_cell(parse_expression(ctx), NULL));
   case STRING_TOKEN:
     return create_string(token.data.string_value);
   case INT_TOKEN:

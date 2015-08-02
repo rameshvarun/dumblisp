@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "stringpool.h"
 
 void create_file_lexer(lexing_context *ctx, const char *filename) {
   ctx->filename = filename;
@@ -107,7 +108,7 @@ static const char *read_symbol(lexing_context *ctx) {
       break;
     }
   }
-  return strdup(name);
+  return stringpool_add(name);
 }
 
 static int read_integer(lexing_context *ctx) {

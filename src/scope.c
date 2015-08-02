@@ -15,7 +15,7 @@ struct expr *scope_lookup(struct scope *scope, const char *symbol) {
 
 struct expr *scope_probe(struct scope *scope, const char *symbol) {
   for (struct mapping *curr = scope->mappings; curr != NULL; curr = curr->next) {
-    if (strcmp(curr->symbol, symbol) == 0)
+    if (curr->symbol == symbol)
       return curr->value;
   }
   return NULL;
@@ -42,7 +42,7 @@ void scope_set_value(struct scope *scope, const char *symbol, struct expr *value
   for (struct scope *curr_scope = scope; curr_scope != NULL; curr_scope = curr_scope->parent) {
     for (struct mapping *curr_map = curr_scope->mappings; curr_map != NULL;
          curr_map = curr_map->next) {
-      if (strcmp(curr_map->symbol, symbol) == 0) {
+      if (curr_map->symbol == symbol) {
         curr_map->value = value;
         return;
       }

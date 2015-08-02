@@ -8,7 +8,7 @@ RELEASEFLAGS=-O3
 
 default: dumblisp
 
-OBJS=src/lexer.o src/interpreter.o src/parser.o src/emitter.o src/scope.o src/expression.o src/builtins.o
+OBJS=src/lexer.o src/interpreter.o src/parser.o src/emitter.o src/scope.o src/expression.o src/builtins.o src/stringpool.o
 
 dumblisp: $(OBJS)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)

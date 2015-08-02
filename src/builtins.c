@@ -128,38 +128,38 @@ expr *builtin_or(struct scope *scope, expr *arguments) {
 
 /* COMPARISONS */
 
-/*expr *builtin_eq(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL) {
-    fprintf(stderr, "= must have at least two arguments.");
-  }
-  expr *first = eval(scope, arguments);
-  expr *second = eval(scope, arguments->next);
+expr *builtin_eq(scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("= must have at least two arguments.");
+
+  expr *first = eval(scope, arguments->head);
+  expr *second = eval(scope, nth(1, arguments));
   assert(first->type == INT_EXPR);
   assert(second->type == INT_EXPR);
-  return create_bool_expression(first->data.int_value == second->data.int_value);
+  return create_bool(first->int_value == second->int_value);
 }
 
-expr *builtin_lt(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL) {
-    fprintf(stderr, "= must have at least two arguments.");
-  }
-  expr *first = eval(scope, arguments);
-  expr *second = eval(scope, arguments->next);
+expr *builtin_lt(scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("< must have at least two arguments.");
+
+  expr *first = eval(scope, arguments->head);
+  expr *second = eval(scope, nth(1, arguments));
   assert(first->type == INT_EXPR);
   assert(second->type == INT_EXPR);
-  return create_bool_expression(first->data.int_value < second->data.int_value);
+  return create_bool(first->int_value < second->int_value);
 }
 
-expr *builtin_gt(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->next == NULL) {
-    fprintf(stderr, "= must have at least two arguments.");
-  }
-  expr *first = eval(scope, arguments);
-  expr *second = eval(scope, arguments->next);
+expr *builtin_gt(scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("> must have at least two arguments.");
+
+  expr *first = eval(scope, arguments->head);
+  expr *second = eval(scope, nth(1, arguments));
   assert(first->type == INT_EXPR);
   assert(second->type == INT_EXPR);
-  return create_bool_expression(first->data.int_value > second->data.int_value);
-}*/
+  return create_bool(first->int_value > second->int_value);
+}
 
 /* ARITHMATIC OPERATORS */
 

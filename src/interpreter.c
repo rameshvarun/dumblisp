@@ -48,9 +48,9 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, "/", create_builtin(builtin_div));
 
   // Comparison operators
-  // scope_add_mapping(root, "=", create_builtin(builtin_eq));
-  // scope_add_mapping(root, "<", create_builtin(builtin_lt));
-  // scope_add_mapping(root, ">", create_builtin(builtin_gt));
+  scope_add_mapping(root, "=", create_builtin(builtin_eq));
+  scope_add_mapping(root, "<", create_builtin(builtin_lt));
+  scope_add_mapping(root, ">", create_builtin(builtin_gt));
 
   // List manipulation
   scope_add_mapping(root, "LEN", create_builtin(builtin_len));

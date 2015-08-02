@@ -49,7 +49,7 @@ void emit_expression(expr *e) {
 
   // User-defined function object
   case FUNC_EXPR:
-    printf("<function args: ");
+    printf("<%s args: ", e->ismacro ? "macro" : "function");
     emit_expression(e->arguments);
     printf(" body: ");
     emit_expression(e->body);

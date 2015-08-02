@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <strings.h>
 
 /* HELPER FUNCTIONS */
 static inline bool islist(expr *e) { return e == NULL || e->type == CELL_EXPR; }
@@ -290,15 +291,6 @@ expr *builtin_set(struct scope *scope, expr *arguments) {
   return val;
 }
 
-/*
-
-expr *builtin_strlen(struct scope *scope, expr *arguments) { return NULL; }
-
-expr *builtin_strcmp(struct scope *scope, expr *arguments) { return NULL; }
-
-expr *builtin_strcat(struct scope *scope, expr *arguments) { return NULL; }
-*/
-
 /* Function Creation */
 expr *builtin_lambda(struct scope *scope, expr *arguments) {
   if (len(arguments) < 2)
@@ -375,4 +367,55 @@ expr *builtin_cons(scope *scope, expr *arguments) {
   if (len(arguments) != 2)
     PANIC("CONS must have exactly one argument.");
   return create_cell(eval(scope, nth(0, arguments)), eval(scope, nth(1, arguments)));
+}
+
+expr *builtin_strlen(scope *scope, expr *arguments) {
+  if (len(arguments) != 1)
+    PANIC("STRLEN takes exactly one argument.");
+  expr *string = eval(scope, arguments->head);
+  assert(string != NULL && string->type == STRING_EXPR);
+  return create_int(strlen(string->string_value));
+}
+expr *builtin_strcmp(scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("STRCMP takes exactly two arguments.");
+  expr *a = eval(scope, arguments->head);
+  expr *b = eval(scope, nth(1, arguments));
+  assert(a != NULL && a->type == STRING_EXPR);
+  assert(b != NULL && b->type == STRING_EXPR);
+  return create_int(strcmp(a->string_value, b->string_value));
+}
+expr *builtin_strcat(scope *scope, expr *arguments) {
+  if (len(arguments) != 2)
+    PANIC("STRCAT takes exactly two arguments.");
+  expr *a = eval(scope, arguments->head);
+  expr *b = eval(scope, nth(1, arguments));
+  assert(a != NULL && a->type == STRING_EXPR);
+  assert(b != NULL && b->type == STRING_EXPR);
+
+  char *newstring = malloc(strlen(a->string_value) + strlen(b->string_value) + 1);
+  strcpy(newstring, a->string_value);
+  strcat(newstring, b->string_value);
+
+  return create_string(newstring);
+}
+expr *builtin_substr(scope *scope, expr *arguments) {
+  if (len(arguments) != 3)
+    PANIC("STRCMP takes exactly three arguments.");
+  expr *string = eval(scope, arguments->head);
+  expr *start = eval(scope, nth(1, arguments));
+  expr *n = eval(scope, nth(2, arguments));
+
+  assert(string != NULL && string->type == STRING_EXPR);
+  assert(start != NULL && start->type == INT_EXPR);
+  assert(n != NULL && n->type == INT_EXPR);
+
+  assert(start->int_value >= 0 && start->int_value <= strlen(string->string_value));
+  assert(n->int_value >= 0 && start->int_value + n->int_value <= strlen(string->string_value));
+
+  char *newstring = malloc(n->int_value + 1);
+  strncpy(newstring, string->string_value + start->int_value, n->int_value);
+  newstring[n->int_value] = '\0';
+
+  return create_string(newstring);
 }

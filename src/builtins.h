@@ -50,3 +50,9 @@ expr *builtin_tail(scope *scope, expr *arguments);
 expr *builtin_nth(scope *scope, expr *arguments);
 expr *builtin_list(scope *scope, expr *arguments);
 expr *builtin_cons(scope *scope, expr *arguments);
+
+// String manipulation
+expr *builtin_strlen(scope *scope, expr *arguments);
+expr *builtin_strcmp(scope *scope, expr *arguments);
+expr *builtin_strcat(scope *scope, expr *arguments);
+expr *builtin_substr(scope *scope, expr *arguments);

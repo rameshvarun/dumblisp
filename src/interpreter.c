@@ -101,6 +101,12 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, stringpool_add("LIST"), create_builtin(builtin_list));
   scope_add_mapping(root, stringpool_add("CONS"), create_builtin(builtin_cons));
 
+  // String Manipulation
+  scope_add_mapping(root, stringpool_add("STRLEN"), create_builtin(builtin_strlen));
+  scope_add_mapping(root, stringpool_add("STRCMP"), create_builtin(builtin_strcmp));
+  scope_add_mapping(root, stringpool_add("STRCAT"), create_builtin(builtin_strcat));
+  scope_add_mapping(root, stringpool_add("SUBSTR"), create_builtin(builtin_substr));
+
   // Load library functions.
   loadstring(root, (const char *)src_lib_lisp);
 

@@ -5,6 +5,7 @@ A dumb lisp interpreter, made for practice.
 ## Features
 - A libreadline-based REPL
 - Create `lambda` functions with closures
+- Create macros
 - It's dumb
 
 ## Built-in Functions
@@ -43,4 +44,3 @@ A dumb lisp interpreter, made for practice.
 
 ## TODO
 - Garbage collection
-- Interning symbol strings

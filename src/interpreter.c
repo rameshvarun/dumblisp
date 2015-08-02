@@ -19,7 +19,7 @@ static struct scope *create_root_scope() {
 
   // Control flow
   scope_add_mapping(root, "IF", create_builtin(builtin_if));
-  // scope_add_mapping(root, "WHILE", create_builtin(builtin_while));
+  scope_add_mapping(root, "WHILE", create_builtin(builtin_while));
 
   // Boolean Operators
   scope_add_mapping(root, "OR", create_builtin(builtin_or));

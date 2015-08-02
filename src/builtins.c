@@ -92,27 +92,27 @@ expr *builtin_if(struct scope *scope, expr *arguments) {
   return NULL;
 }
 
-/*expr *builtin_while(struct scope *scope, expr *arguments) {
-  if (arguments == NULL || arguments->tail == NULL)
+expr *builtin_while(struct scope *scope, expr *arguments) {
+  if (len(arguments) < 2)
     PANIC("WHILE must have at least two arguments.\n");
 
   while (true) {
     // Evaulate the condition.
-    expr *cond = eval(scope, arguments);
+    expr *cond = eval(scope, arguments->head);
     assert(cond->type = BOOL_EXPR);
 
     // If the condiiton evaluates to false, exit loop.
-    if (!cond->data.boolean_value)
+    if (!cond->boolean_value)
       break;
 
     // Otherwise evaluate body statements.
-    for (expr *e = arguments->next; e != NULL; e = e->next) {
-      eval(scope, e);
+    for (expr *e = arguments->tail; e != NULL; e = e->tail) {
+      eval(scope, e->head);
     }
   }
-
-  return create_empty_list();
-}*/
+  
+  return NULL;
+}
 
 expr *builtin_or(scope *scope, expr *arguments) {
   if (len(arguments) < 2)

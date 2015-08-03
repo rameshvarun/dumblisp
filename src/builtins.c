@@ -304,7 +304,7 @@ expr *builtin_defun(struct scope *scope, expr *arguments) {
     PANIC("DEFUN must have at least three arguments.\n");
 
   assert(arguments->head->type == SYMBOL_EXPR);
-  assert(islist(nth(2, arguments)));
+  assert(islist(nth(1, arguments)));
 
   if (scope_probe(scope, arguments->head->string_value) == NULL)
     scope_add_mapping(scope, arguments->head->string_value,

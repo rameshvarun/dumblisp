@@ -5,7 +5,6 @@
 #include <strings.h>
 
 /* HELPER FUNCTIONS */
-static inline bool islist(expr *e) { return e == NULL || e->type == CELL_EXPR; }
 
 static int len(expr *list) {
   assert(islist(list));
@@ -29,6 +28,11 @@ expr *builtin_quote(scope *scope, expr *arguments) {
   if (len(arguments) != 1)
     PANIC("QUOTE must have exactly one argument.");
   return arguments->head;
+}
+expr *builtin_eval(scope *scope, expr *arguments) {
+  if (len(arguments) != 1)
+    PANIC("HEAD must have exactly one argument.");
+  return eval(scope, eval(scope, arguments->head));
 }
 
 expr *builtin_exit(scope *scope, expr *arguments) {
@@ -295,7 +299,7 @@ expr *builtin_set(struct scope *scope, expr *arguments) {
 expr *builtin_lambda(struct scope *scope, expr *arguments) {
   if (len(arguments) < 2)
     PANIC("LAMBDA must have at least two arguments.\n");
-  assert(islist(arguments->head));
+  assert(islist(arguments->head) || issymbol(arguments->head));
   return create_func(arguments->head, scope, arguments->tail, false);
 }
 
@@ -304,7 +308,7 @@ expr *builtin_defun(struct scope *scope, expr *arguments) {
     PANIC("DEFUN must have at least three arguments.\n");
 
   assert(arguments->head->type == SYMBOL_EXPR);
-  assert(islist(nth(1, arguments)));
+  assert(islist(nth(1, arguments)) || issymbol(nth(1, arguments)));
 
   if (scope_probe(scope, arguments->head->string_value) == NULL)
     scope_add_mapping(scope, arguments->head->string_value,
@@ -320,7 +324,7 @@ expr *builtin_defmacro(struct scope *scope, expr *arguments) {
     PANIC("DEFUN must have at least three arguments.\n");
 
   assert(arguments->head->type == SYMBOL_EXPR);
-  assert(islist(nth(2, arguments)));
+  assert(islist(nth(1, arguments)) || issymbol(nth(1, arguments)));
 
   if (scope_probe(scope, arguments->head->string_value) == NULL)
     scope_add_mapping(scope, arguments->head->string_value,

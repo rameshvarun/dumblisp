@@ -64,5 +64,8 @@ expr *create_string(const char *value);
 expr *create_symbol(const char *value);
 expr *create_func(expr *arguments, scope *closure, expr *body, bool ismacro);
 
+bool islist(expr *e);
+bool issymbol(expr *e);
+
 // Evaluate an expression in the given scope.
 expr *eval(scope *scope, expr *e);

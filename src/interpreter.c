@@ -56,6 +56,7 @@ static struct scope *create_root_scope() {
   struct scope *root = scope_create(NULL);
 
   scope_add_mapping(root, stringpool_add("QUOTE"), create_builtin(builtin_quote));
+  scope_add_mapping(root, stringpool_add("EVAL"), create_builtin(builtin_eval));
   scope_add_mapping(root, stringpool_add("EXIT"), create_builtin(builtin_exit));
 
   // Control flow

@@ -64,6 +64,15 @@ expr *create_func(expr *arguments, struct scope *closure, expr *body, bool ismac
   return e;
 }
 
+bool islist(expr *e) { return e == NULL || e->type == CELL_EXPR; }
+bool issymbol(expr *e) { return e != NULL && e->type == SYMBOL_EXPR; }
+
+static inline expr* eval_varargs(scope *scope, expr *e) {
+  assert(islist(e));
+  if(e == NULL) return NULL;
+  else  return create_cell(eval(scope, e->head), eval_varargs(scope, e->tail));
+}
+
 expr *eval(scope *scope, expr *e) {
   if (e == NULL)
     return NULL;
@@ -72,6 +81,9 @@ expr *eval(scope *scope, expr *e) {
   // String and Integer expressions evaluate to themselves.
   case STRING_EXPR:
   case INT_EXPR:
+  case FUNC_EXPR:
+  case BUILTIN_EXPR:
+  case BOOL_EXPR:
     return e;
   case SYMBOL_EXPR: {
     expr *value = scope_lookup(scope, e->string_value);
@@ -90,22 +102,29 @@ expr *eval(scope *scope, expr *e) {
       // Call the function.
       struct scope *new_scope = scope_create(head->closure);
 
-      expr *actuals = e->tail;
-      for (expr *formal = head->arguments; formal != NULL; formal = formal->tail) {
-        expr *formal_expr = formal->head;
-        assert(formal_expr->type == SYMBOL_EXPR);
-        if (actuals != NULL) {
-          // If this is a regular function, evaluate the argument. Otherwise, return expression,
-          // Since macros take in their arguments literally.
-          expr *actual_value = head->ismacro ? actuals->head : eval(scope, actuals->head);
-          // Bind the actual value to the formal symbol.
-          scope_add_mapping(new_scope, formal_expr->string_value, actual_value);
-          // Proceed to the next actual.
-          actuals = actuals->tail;
-        } else {
-          // No more actuals, so simply bind the symbol to the empty list (NIL).
-          scope_add_mapping(new_scope, formal_expr->string_value, NULL);
+      if(islist(head->arguments)) {
+        expr *actuals = e->tail;
+        for (expr *formal = head->arguments; formal != NULL; formal = formal->tail) {
+          expr *formal_expr = formal->head;
+          assert(formal_expr->type == SYMBOL_EXPR);
+          if (actuals != NULL) {
+            // If this is a regular function, evaluate the argument. Otherwise, return expression,
+            // Since macros take in their arguments literally.
+            expr *actual_value = head->ismacro ? actuals->head : eval(scope, actuals->head);
+            // Bind the actual value to the formal symbol.
+            scope_add_mapping(new_scope, formal_expr->string_value, actual_value);
+            // Proceed to the next actual.
+            actuals = actuals->tail;
+          } else {
+            // No more actuals, so simply bind the symbol to the empty list (NIL).
+            scope_add_mapping(new_scope, formal_expr->string_value, NULL);
+          }
         }
+      } else if(issymbol(head->arguments)) {
+        if(head->ismacro)
+          scope_add_mapping(new_scope, head->arguments->string_value, e->tail);
+        else
+          scope_add_mapping(new_scope, head->arguments->string_value, eval_varargs(scope, e->tail));
       }
 
       // Evaulate the body of the function

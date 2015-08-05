@@ -67,10 +67,12 @@ expr *create_func(expr *arguments, struct scope *closure, expr *body, bool ismac
 bool islist(expr *e) { return e == NULL || e->type == CELL_EXPR; }
 bool issymbol(expr *e) { return e != NULL && e->type == SYMBOL_EXPR; }
 
-static inline expr* eval_varargs(scope *scope, expr *e) {
+static inline expr *eval_varargs(scope *scope, expr *e) {
   assert(islist(e));
-  if(e == NULL) return NULL;
-  else  return create_cell(eval(scope, e->head), eval_varargs(scope, e->tail));
+  if (e == NULL)
+    return NULL;
+  else
+    return create_cell(eval(scope, e->head), eval_varargs(scope, e->tail));
 }
 
 expr *eval(scope *scope, expr *e) {
@@ -102,7 +104,7 @@ expr *eval(scope *scope, expr *e) {
       // Call the function.
       struct scope *new_scope = scope_create(head->closure);
 
-      if(islist(head->arguments)) {
+      if (islist(head->arguments)) {
         expr *actuals = e->tail;
         for (expr *formal = head->arguments; formal != NULL; formal = formal->tail) {
           expr *formal_expr = formal->head;
@@ -120,8 +122,8 @@ expr *eval(scope *scope, expr *e) {
             scope_add_mapping(new_scope, formal_expr->string_value, NULL);
           }
         }
-      } else if(issymbol(head->arguments)) {
-        if(head->ismacro)
+      } else if (issymbol(head->arguments)) {
+        if (head->ismacro)
           scope_add_mapping(new_scope, head->arguments->string_value, e->tail);
         else
           scope_add_mapping(new_scope, head->arguments->string_value, eval_varargs(scope, e->tail));

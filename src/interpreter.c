@@ -114,10 +114,16 @@ static struct scope *create_root_scope() {
   return root;
 }
 
+bool use_panic_jmpbuf = false;
+jmp_buf panic_jmpbuf;
+
 void run_repl() {
   struct scope *root = create_root_scope();
 
   while (true) {
+    use_panic_jmpbuf = true;
+    setjmp(panic_jmpbuf);
+
     // Read line from standard in
     char *line = readline(">> ");
 

@@ -89,8 +89,8 @@ expr *eval(scope *scope, expr *e) {
     return e;
   case SYMBOL_EXPR: {
     expr *value = scope_lookup(scope, e->string_value);
-    if (!value)
-      PANIC("Symbol %s not bound to any value\n", e->string_value);
+    // if (!value)
+    //  PANIC("Symbol %s not bound to any value\n", e->string_value);
     return value;
   }
   case CELL_EXPR: {

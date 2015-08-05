@@ -133,15 +133,32 @@ expr *builtin_or(scope *scope, expr *arguments) {
 
 /* COMPARISONS */
 
+static inline bool equals(expr *a, expr *b) {
+  // If one is NULL, the other must be null.
+  if (a == NULL)
+    return b == NULL;
+  if (b == NULL)
+    return a == NULL;
+
+  // For primitive types, do a value comparison.
+  if (a->type == INT_EXPR && b->type == INT_EXPR)
+    return a->int_value == b->int_value;
+  if (a->type == SYMBOL_EXPR && b->type == SYMBOL_EXPR)
+    return a->string_value == b->string_value;
+  if (a->type == BOOL_EXPR && b->type == BOOL_EXPR)
+    return a->boolean_value == b->boolean_value;
+
+  // Otherwise, do an address comparison.
+  return a == b;
+}
+
 expr *builtin_eq(scope *scope, expr *arguments) {
   if (len(arguments) != 2)
     PANIC("= must have at least two arguments.");
 
   expr *first = eval(scope, arguments->head);
   expr *second = eval(scope, nth(1, arguments));
-  assert(first->type == INT_EXPR);
-  assert(second->type == INT_EXPR);
-  return create_bool(first->int_value == second->int_value);
+  return create_bool(equals(first, second));
 }
 
 expr *builtin_lt(scope *scope, expr *arguments) {
@@ -287,6 +304,8 @@ expr *builtin_set(struct scope *scope, expr *arguments) {
 
   // If a mapping exists in the scope chain, modify that mapping. Otherwise, create new mapping in
   // the current scope.
+
+  // TODO: Fix, now that NULL is actually a value.
   if (scope_lookup(scope, arguments->head->string_value) != NULL)
     scope_set_value(scope, arguments->head->string_value, val);
   else

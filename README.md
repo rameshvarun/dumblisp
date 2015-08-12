@@ -2,6 +2,23 @@
 
 A dumb lisp interpreter, made for practice.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Features](#features)
+- [Built-in Functions](#built-in-functions)
+  - [(print a b ...)](#print-a-b-)
+  - [(defun name (arg-a arg-b ...) stmnt-a stmnt-b ...)](#defun-name-arg-a-arg-b--stmnt-a-stmnt-b-)
+  - [(let ((var-a val-a) (var-b val-b) ...) expr-a expr-b ...)](#let-var-a-val-a-var-b-val-b--expr-a-expr-b-)
+  - [(set symbol value)](#set-symbol-value)
+  - [(lambda (arg-a arg-b ...) stmnt-a stmnt-b ...)](#lambda-arg-a-arg-b--stmnt-a-stmnt-b-)
+  - [Arithmatic Operators (+, -, /, *)](#arithmatic-operators-----)
+  - [Comparison Operators (=, <, >)](#comparison-operators---)
+- [TODO](#todo)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Features
 - A libreadline-based REPL
 - Create `lambda` functions with closures

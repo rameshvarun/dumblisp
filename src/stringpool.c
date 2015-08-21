@@ -1,6 +1,6 @@
 #include "stringpool.h"
 #include "defs.h"
-#include <strings.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 

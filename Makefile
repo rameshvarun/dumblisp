@@ -1,5 +1,5 @@
 CC=gcc
-LIBS=-lreadline
+LIBS=-lreadline -lgc
 CFLAGS=-std=gnu99
 DEBUGFLAGS=-ggdb -g3 -gdwarf-2
 RELEASEFLAGS=-O3
@@ -23,6 +23,7 @@ clean:
 	find . -name "*.o" -type f -delete
 	find . -name "*~" -type f -delete
 	rm src/lib.h
+	rm dumblisp
 
 test:
 	./runtests.sh

@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <strings.h>
+#include <string.h>
+
+#include "gc.h"
 
 /* HELPER FUNCTIONS */
 
@@ -416,7 +418,7 @@ expr *builtin_strcat(scope *scope, expr *arguments) {
   assert(a != NULL && a->type == STRING_EXPR);
   assert(b != NULL && b->type == STRING_EXPR);
 
-  char *newstring = malloc(strlen(a->string_value) + strlen(b->string_value) + 1);
+  char *newstring = GC_MALLOC_ATOMIC(strlen(a->string_value) + strlen(b->string_value) + 1);
   strcpy(newstring, a->string_value);
   strcat(newstring, b->string_value);
 
@@ -436,7 +438,7 @@ expr *builtin_substr(scope *scope, expr *arguments) {
   assert(start->int_value >= 0 && start->int_value <= strlen(string->string_value));
   assert(n->int_value >= 0 && start->int_value + n->int_value <= strlen(string->string_value));
 
-  char *newstring = malloc(n->int_value + 1);
+  char *newstring = GC_MALLOC_ATOMIC(n->int_value + 1);
   strncpy(newstring, string->string_value + start->int_value, n->int_value);
   newstring[n->int_value] = '\0';
 

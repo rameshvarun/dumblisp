@@ -15,7 +15,6 @@ A dumb lisp interpreter, made for practice.
   - [(lambda (arg-a arg-b ...) stmnt-a stmnt-b ...)](#lambda-arg-a-arg-b--stmnt-a-stmnt-b-)
   - [Arithmatic Operators (+, -, /, *)](#arithmatic-operators-----)
   - [Comparison Operators (=, <, >)](#comparison-operators---)
-- [TODO](#todo)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -23,6 +22,7 @@ A dumb lisp interpreter, made for practice.
 - A libreadline-based REPL
 - Create `lambda` functions with closures
 - Create macros
+- Garbage collection using the Boehm GC
 - It's dumb
 
 ## Built-in Functions
@@ -58,6 +58,3 @@ A dumb lisp interpreter, made for practice.
 ### Arithmatic Operators (+, -, /, *)
 
 ### Comparison Operators (=, <, >)
-
-## TODO
-- Garbage collection

@@ -3,6 +3,8 @@
 #include "stdlib.h"
 #include "string.h"
 
+#include "gc.h"
+
 struct expr *scope_lookup(struct scope *scope, const char *symbol) {
   for (struct scope *curr = scope; curr != NULL; curr = curr->parent) {
     struct expr *e = scope_probe(curr, symbol);
@@ -22,14 +24,14 @@ struct expr *scope_probe(struct scope *scope, const char *symbol) {
 }
 
 struct scope *scope_create(struct scope *parent) {
-  struct scope *scope = malloc(sizeof(struct scope));
+  struct scope *scope = GC_MALLOC(sizeof(struct scope));
   scope->parent = parent;
   scope->mappings = NULL;
   return scope;
 }
 
 void scope_add_mapping(struct scope *scope, const char *symbol, struct expr *value) {
-  struct mapping *m = malloc(sizeof(struct mapping));
+  struct mapping *m = GC_MALLOC(sizeof(struct mapping));
   m->symbol = symbol;
   m->value = value;
 

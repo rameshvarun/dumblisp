@@ -11,6 +11,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include "gc.h"
+
 #define REPL_LINE_MAX 4096
 
 static expr *loadfile(scope *scope, const char *filename) {
@@ -142,6 +144,8 @@ void run_repl() {
 }
 
 int main(int argc, char **argv) {
+  GC_INIT();
+
   if (argc == 1) // No arguments means run REPL
     run_repl();
 

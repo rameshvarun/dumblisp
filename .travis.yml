@@ -1,4 +1,9 @@
 language: c
 os: linux
-install: sudo apt-get install libgc-dev
+
+addons:
+  apt:
+    packages:
+    - libgc-dev
+    
 script: make && make test

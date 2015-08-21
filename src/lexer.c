@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include "stringpool.h"
 
+#include "gc.h"
+
 void create_file_lexer(lexing_context *ctx, const char *filename) {
   ctx->filename = filename;
   ctx->lineno = 1;
@@ -54,12 +56,12 @@ static void advance_until_newline(lexing_context *ctx) {
 
 // Read a string literal, ending on a close-quote
 const char *read_string(lexing_context *ctx) {
-  char literal[MAX_LITERAL_SIZE];
+  char buffer[MAX_LITERAL_SIZE];
   int position = 0;
   while (true) {
     int c = get_char(ctx);
     if (c == '\"') {
-      literal[position] = '\0';
+      buffer[position] = '\0';
       break;
     }
 
@@ -81,10 +83,12 @@ const char *read_string(lexing_context *ctx) {
       }
     }
 
-    literal[position] = c;
+    buffer[position] = c;
     ++position;
   }
-  return strdup(literal);
+  char *literal = GC_MALLOC_ATOMIC(strlen(buffer) + 1);
+  strcpy(literal, buffer);
+  return literal;
 }
 
 bool is_validsymbolchar(char c) {
@@ -137,7 +141,7 @@ bool is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 bool is_alphanumeric(char c) { return is_letter(c) || is_digit(c); }
 
 void unget_token(lexing_context *ctx, token_t *token) {
-  token_t *new_token = malloc(sizeof(token_t));
+  token_t *new_token = GC_MALLOC(sizeof(token_t));
   memcpy(new_token, token, sizeof(token_t));
   new_token->next = ctx->stack;
   ctx->stack = new_token;
@@ -149,7 +153,7 @@ void get_next_token(lexing_context *ctx, token_t *token) {
     token_t *next_tok = ctx->stack;
     ctx->stack = next_tok->next;
     memcpy(token, next_tok, sizeof(token_t));
-    free(next_tok);
+    GC_FREE(next_tok);
     return;
   }
 

@@ -5,9 +5,10 @@
 #include "assert.h"
 #include "emitter.h"
 
+#include "gc.h"
+
 static inline expr *make_expr() {
-  expr *e = malloc(sizeof(expr));
-  memset(e, 0, sizeof(expr));
+  expr *e = GC_MALLOC(sizeof(expr));
   return e;
 }
 

@@ -84,6 +84,7 @@ static struct scope *create_root_scope() {
 
   // I/O Functions
   scope_add_mapping(root, stringpool_add("PRINT"), create_builtin(builtin_print));
+  scope_add_mapping(root, stringpool_add("READLINE"), create_builtin(builtin_readline));
 
   // Arithmatic operators
   scope_add_mapping(root, stringpool_add("+"), create_builtin(builtin_plus));

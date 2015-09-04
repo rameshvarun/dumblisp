@@ -14,6 +14,7 @@ expr *builtin_exit(scope *scope, expr *arguments);
 
 /* IO functions */
 expr *builtin_print(scope *scope, expr *arguments);
+expr *builtin_readline(scope *scope, expr *arguments);
 
 /* Control flow */
 expr *builtin_if(scope *scope, expr *arguments);

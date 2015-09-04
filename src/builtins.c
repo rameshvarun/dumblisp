@@ -4,6 +4,9 @@
 #include <assert.h>
 #include <string.h>
 
+#include <readline/readline.h>
+#include <readline/history.h>
+
 #include "gc.h"
 
 /* HELPER FUNCTIONS */
@@ -77,6 +80,30 @@ expr *builtin_print(struct scope *scope, expr *arguments) {
 
   printf("\n");
   return NULL;
+}
+
+expr *builtin_readline(scope *scope, expr *arguments) {
+  // Read line from standard in
+  char *line = NULL;
+  if (len(arguments) == 0) {
+    line = readline(NULL);
+  } else if (len(arguments) == 1) {
+    expr *prompt = eval(scope, arguments->head);
+    assert(prompt != NULL && prompt->type == STRING_EXPR);
+    line = readline(prompt->string_value);
+  } else {
+    PANIC("READLINE takes at most 1 argument.");
+  }
+
+  // Store line in the garbage-collected heap.
+  char *gcline = GC_MALLOC_ATOMIC(strlen(line) + 1);
+  strcpy(gcline, line);
+
+  // Save line to history, and free line
+  add_history(line);
+  free(line);
+
+  return create_string(gcline);
 }
 
 /* CONTROL FLOW */

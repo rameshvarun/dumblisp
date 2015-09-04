@@ -11,7 +11,13 @@ TOTAL=0
 for file in $(find ./tests -type f -name "*.lisp");
 do
   printf "Testing ${file}...\t"
-  RESULT=`diff <(./dumblisp ${file}) ${file}.out`
+  if [ -f "${file}.in" ]
+    then
+      RESULT=`diff <(cat ${file}.in | ./dumblisp ${file}) ${file}.out`
+    else
+      RESULT=`diff <(./dumblisp ${file}) ${file}.out`
+    fi
+
   if [[ $RESULT == "" ]]
     then
       printf "${GREEN}passed...${NORMAL}\n"

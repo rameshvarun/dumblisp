@@ -59,3 +59,4 @@ expr *builtin_strlen(scope *scope, expr *arguments);
 expr *builtin_strcmp(scope *scope, expr *arguments);
 expr *builtin_strcat(scope *scope, expr *arguments);
 expr *builtin_substr(scope *scope, expr *arguments);
+expr *builtin_strtol(scope *scope, expr *arguments);

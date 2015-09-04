@@ -471,3 +471,10 @@ expr *builtin_substr(scope *scope, expr *arguments) {
 
   return create_string(newstring);
 }
+expr *builtin_strtol(scope *scope, expr *arguments) {
+  if (len(arguments) != 1)
+    PANIC("STRTOL takes exactly one argument.");
+  expr *string = eval(scope, arguments->head);
+  assert(string != NULL && string->type == STRING_EXPR);
+  return create_int(strtol(string->string_value, NULL, 0));
+}

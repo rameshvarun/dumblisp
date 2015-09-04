@@ -70,3 +70,6 @@
     )
   )
 )
+
+;; Aliases
+(set atoi strtol)

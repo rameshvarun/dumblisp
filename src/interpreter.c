@@ -110,6 +110,7 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, stringpool_add("STRCMP"), create_builtin(builtin_strcmp));
   scope_add_mapping(root, stringpool_add("STRCAT"), create_builtin(builtin_strcat));
   scope_add_mapping(root, stringpool_add("SUBSTR"), create_builtin(builtin_substr));
+  scope_add_mapping(root, stringpool_add("STRTOL"), create_builtin(builtin_strtol));
 
   // Load library functions.
   loadstring(root, (const char *)src_lib_lisp);

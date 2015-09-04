@@ -15,7 +15,7 @@
 
 #define REPL_LINE_MAX 4096
 
-static expr *loadfile(scope *scope, const char *filename) {
+expr *loadfile(scope *scope, const char *filename) {
   lexing_context ctx;
   create_file_lexer(&ctx, filename);
 
@@ -34,7 +34,7 @@ static expr *loadfile(scope *scope, const char *filename) {
   return last_value;
 }
 
-static expr *loadstring(scope *scope, const char *source) {
+expr *loadstring(scope *scope, const char *source) {
   lexing_context ctx;
   create_string_lexer(&ctx, source);
 
@@ -61,6 +61,9 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, stringpool_add("EVAL"), create_builtin(builtin_eval));
   scope_add_mapping(root, stringpool_add("EXIT"), create_builtin(builtin_exit));
 
+  scope_add_mapping(root, stringpool_add("LOAD-STRING"), create_builtin(builtin_loadstring));
+  scope_add_mapping(root, stringpool_add("LOAD-FILE"), create_builtin(builtin_loadfile));
+
   // Control flow
   scope_add_mapping(root, stringpool_add("IF"), create_builtin(builtin_if));
   scope_add_mapping(root, stringpool_add("WHILE"), create_builtin(builtin_while));
@@ -84,7 +87,7 @@ static struct scope *create_root_scope() {
 
   // I/O Functions
   scope_add_mapping(root, stringpool_add("PRINT"), create_builtin(builtin_print));
-  scope_add_mapping(root, stringpool_add("READLINE"), create_builtin(builtin_readline));
+  scope_add_mapping(root, stringpool_add("READ-LINE"), create_builtin(builtin_readline));
 
   // Arithmatic operators
   scope_add_mapping(root, stringpool_add("+"), create_builtin(builtin_plus));

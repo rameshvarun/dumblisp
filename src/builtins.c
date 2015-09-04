@@ -1,4 +1,6 @@
 #include "builtins.h"
+#include "interpreter.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -38,6 +40,20 @@ expr *builtin_eval(scope *scope, expr *arguments) {
   if (len(arguments) != 1)
     PANIC("HEAD must have exactly one argument.");
   return eval(scope, eval(scope, arguments->head));
+}
+expr *builtin_loadstring(scope *scope, expr *arguments) {
+  if (len(arguments) != 1)
+    PANIC("LOAD-STRING takes exactly one argument.");
+  expr *string = eval(scope, arguments->head);
+  assert(string != NULL && string->type == STRING_EXPR);
+  return loadstring(scope, string->string_value);
+}
+expr *builtin_loadfile(scope *scope, expr *arguments) {
+  if (len(arguments) != 1)
+    PANIC("LOAD-FILE takes exactly one argument.");
+  expr *string = eval(scope, arguments->head);
+  assert(string != NULL && string->type == STRING_EXPR);
+  return loadfile(scope, string->string_value);
 }
 
 expr *builtin_exit(scope *scope, expr *arguments) {

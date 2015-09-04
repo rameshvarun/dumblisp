@@ -7,7 +7,10 @@
 /* ESSENTIAL BUILTINS */
 // Return the argument directly, without evaluating.
 expr *builtin_quote(scope *scope, expr *arguments);
+
 expr *builtin_eval(scope *scope, expr *arguments);
+expr *builtin_loadstring(scope *scope, expr *arguments);
+expr *builtin_loadfile(scope *scope, expr *arguments);
 
 // Exit with a status code. If no code is provided, exit with status code 0.
 expr *builtin_exit(scope *scope, expr *arguments);

@@ -112,4 +112,5 @@ The case statement itself is implemented as a macro on top of the `if` builtin.
 - Boolean Operators (`OR`, `AND`, `NOT`)
 - List Manipulation Functions (`LIST`, `LEN`, `HEAD`, `TAIL`, `NTH`, `CONS`)
 - String Manipulation Functions (`STRLEN`, `STRCMP`, `STRCAT`, `SUBSTR`)
+- `TYPEOF` function
 - `PROGN` macro

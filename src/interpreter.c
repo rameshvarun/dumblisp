@@ -61,6 +61,8 @@ static struct scope *create_root_scope() {
   scope_add_mapping(root, stringpool_add("EVAL"), create_builtin(builtin_eval));
   scope_add_mapping(root, stringpool_add("EXIT"), create_builtin(builtin_exit));
 
+  scope_add_mapping(root, stringpool_add("TYPEOF"), create_builtin(builtin_typeof));
+
   scope_add_mapping(root, stringpool_add("LOAD-STRING"), create_builtin(builtin_loadstring));
   scope_add_mapping(root, stringpool_add("LOAD-FILE"), create_builtin(builtin_loadfile));
 

@@ -66,6 +66,32 @@ expr *builtin_exit(scope *scope, expr *arguments) {
   }
 }
 
+expr *builtin_typeof(scope *scope, expr *arguments) {
+  if (len(arguments) != 1)
+    PANIC("TYPEOF takes exactly one argument.");
+  expr *e = eval(scope, arguments->head);
+  if (e == NULL)
+    return create_string("list");
+
+  switch (e->type) {
+  case CELL_EXPR:
+    return create_string("list");
+  case INT_EXPR:
+    return create_string("integer");
+  case STRING_EXPR:
+    return create_string("string");
+  case SYMBOL_EXPR:
+    return create_string("symbol");
+  case BUILTIN_EXPR:
+    return create_string("builtin");
+  case FUNC_EXPR:
+    return create_string("function");
+  case BOOL_EXPR:
+    return create_string("boolean");
+  }
+  PANIC("Unkown object type.");
+}
+
 /* IO Utilities */
 expr *builtin_print(struct scope *scope, expr *arguments) {
   if (len(arguments) == 0)

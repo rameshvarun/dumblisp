@@ -12,6 +12,8 @@ expr *builtin_eval(scope *scope, expr *arguments);
 expr *builtin_loadstring(scope *scope, expr *arguments);
 expr *builtin_loadfile(scope *scope, expr *arguments);
 
+expr *builtin_typeof(scope *scope, expr *arguments);
+
 // Exit with a status code. If no code is provided, exit with status code 0.
 expr *builtin_exit(scope *scope, expr *arguments);
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "scope.h"
-#include "expression.h"
 #include "defs.h"
+#include "expression.h"
+#include "scope.h"
 
 /* ESSENTIAL BUILTINS */
 // Return the argument directly, without evaluating.

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdbool.h>
 #include "defs.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 // An enum representing the possible tokens in a dumblisp program.
 typedef enum {

@@ -2,9 +2,9 @@
 
 struct expr;
 
-#include "stdbool.h"
-#include "scope.h"
 #include "defs.h"
+#include "scope.h"
+#include "stdbool.h"
 
 typedef enum {
   CELL_EXPR,
@@ -13,11 +13,16 @@ typedef enum {
   SYMBOL_EXPR,
   BUILTIN_EXPR,
   FUNC_EXPR,
-  BOOL_EXPR
+  BOOL_EXPR,
+  USERDATA_EXPR /* Represents a pointer to some user managed data. Similar to lightuserdata. in the
+                   Lua programming language. */
 } EXPR_TYPE;
 
 // The prototype of a built-in function
 typedef struct expr *(*builtin)(struct scope *scope, struct expr *arguments);
+
+// The prototype of a userdata_gc function
+typedef void (*userdata_gc)(void *userdata);
 
 // Represents an expression
 typedef struct expr {
@@ -41,8 +46,8 @@ typedef struct expr {
     // For expressions of type BUILTIN_EXPR, this represents the corresponding function pointer
     builtin func_ptr;
 
-    // For expressions of type FUNC_EXPR, this represents all of the data required to execute the
-    // function
+    /* For expressions of type FUNC_EXPR, this represents all of the data required to execute the
+       function. */
     struct {
       struct expr *arguments; // A list of symbols naming the argument of a function
       struct scope *closure;  // The scope in which this function was created
@@ -52,6 +57,14 @@ typedef struct expr {
 
     // For expressions of type BOOL_EXPR, this represents the boolean value
     bool boolean_value;
+
+    /* For expressions of type USERDATA_EXPR, this stores both the pointer to the user data, and a
+     * function that can be used to free / deinitalize that data when this object is garbage
+     * collected. */
+    struct {
+      void *userdata_ptr;
+      userdata_gc userdata_gc;
+    };
   };
 } expr;
 

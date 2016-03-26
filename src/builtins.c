@@ -1,13 +1,13 @@
 #include "builtins.h"
 #include "interpreter.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
 
-#include <readline/readline.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 
 #include "gc.h"
 

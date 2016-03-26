@@ -1,15 +1,15 @@
-#include "lexer.h"
-#include "parser.h"
-#include "emitter.h"
-#include "scope.h"
 #include "builtins.h"
+#include "emitter.h"
+#include "lexer.h"
 #include "lib.h"
+#include "parser.h"
+#include "scope.h"
 
 #include "stdlib.h"
 #include "stringpool.h"
 
-#include <readline/readline.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 
 #include "gc.h"
 

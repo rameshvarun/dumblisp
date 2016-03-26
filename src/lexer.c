@@ -1,9 +1,9 @@
 #include "lexer.h"
 
+#include "stringpool.h"
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include "stringpool.h"
 
 #include "gc.h"
 

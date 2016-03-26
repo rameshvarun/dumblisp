@@ -73,3 +73,13 @@
 
 ;; Aliases
 (set atoi strtol)
+
+;; when / unless conditionals.
+(defmacro when args
+  (set cond (head args))
+  (set stmnts (tail args))
+  (list 'if cond (cons 'progn stmnts)))
+(defmacro unless args
+  (set cond (head args))
+  (set stmnts (tail args))
+  (list 'if cond 'nil (cons 'progn stmnts)))
